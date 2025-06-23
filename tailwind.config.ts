@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,14 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				sport: {
+					primary: '#6366f1',
+					secondary: '#8b5cf6',
+					accent: '#06b6d4',
+					success: '#10b981',
+					warning: '#f59e0b',
+					danger: '#ef4444'
 				}
 			},
 			borderRadius: {
@@ -84,11 +93,45 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'slide-up': {
+					'0%': {
+						transform: 'translateY(100%)'
+					},
+					'100%': {
+						transform: 'translateY(0)'
+					}
+				},
+				'bounce-subtle': {
+					'0%, 100%': {
+						transform: 'translateY(0)'
+					},
+					'50%': {
+						transform: 'translateY(-5px)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.5s ease-out',
+				'slide-up': 'slide-up 0.3s ease-out',
+				'bounce-subtle': 'bounce-subtle 2s infinite'
+			},
+			backgroundImage: {
+				'gradient-sport': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+				'gradient-field': 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+				'gradient-tournament': 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
 			}
 		}
 	},
