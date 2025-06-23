@@ -135,6 +135,48 @@ const Index = () => {
             </p>
           </motion.div>
 
+          {/* Hero Images */}
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto"
+          >
+            <div className="glass-card rounded-2xl overflow-hidden">
+              <img 
+                src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                alt="Padel Players in Action"
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-4">
+                <h3 className="text-white font-semibold mb-2">Gioca con stile</h3>
+                <p className="text-blue-200 text-sm">Trova partner del tuo livello</p>
+              </div>
+            </div>
+            <div className="glass-card rounded-2xl overflow-hidden">
+              <img 
+                src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                alt="Padel Court"
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-4">
+                <h3 className="text-white font-semibold mb-2">Campi premium</h3>
+                <p className="text-blue-200 text-sm">Prenota in tempo reale</p>
+              </div>
+            </div>
+            <div className="glass-card rounded-2xl overflow-hidden">
+              <img 
+                src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                alt="Padel Equipment"
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-4">
+                <h3 className="text-white font-semibold mb-2">Vinci tornei</h3>
+                <p className="text-blue-200 text-sm">Premi incredibili ti aspettano</p>
+              </div>
+            </div>
+          </motion.div>
+
           <motion.div
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -181,7 +223,7 @@ const Index = () => {
           </motion.div>
         </motion.section>
 
-        {/* Features Section */}
+        {/* Features Section with Padel Images */}
         <motion.section 
           className="container mx-auto px-6 py-20"
           variants={itemVariants}
@@ -201,37 +243,43 @@ const Index = () => {
                 icon: Target,
                 title: "Matchmaking Intelligente",
                 description: "Il nostro algoritmo ti abbina con giocatori del tuo stesso livello per partite equilibrate e divertenti",
-                gradient: "from-pink-500 to-rose-500"
+                gradient: "from-pink-500 to-rose-500",
+                image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
               },
               {
                 icon: Calendar,
                 title: "Prenotazione Campi",
                 description: "Prenota campi disponibili in tempo reale con un sistema di pagamento integrato e notifiche automatiche",
-                gradient: "from-blue-500 to-cyan-500"
+                gradient: "from-blue-500 to-cyan-500",
+                image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
               },
               {
                 icon: Trophy,
                 title: "Tornei Dinamici",
                 description: "Crea e partecipa a tornei con bracket automatici, classifiche in tempo reale e premi virtuali",
-                gradient: "from-purple-500 to-indigo-500"
+                gradient: "from-purple-500 to-indigo-500",
+                image: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
               },
               {
                 icon: TrendingUp,
                 title: "Statistiche Avanzate",
                 description: "Traccia le tue performance, migliora il tuo ranking e monitora i tuoi progressi nel tempo",
-                gradient: "from-green-500 to-emerald-500"
+                gradient: "from-green-500 to-emerald-500",
+                image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
               },
               {
                 icon: Shield,
                 title: "Sistema di Rating",
                 description: "Sistema di valutazione peer-to-peer per mantenere alta la qualità dei giocatori e delle partite",
-                gradient: "from-orange-500 to-red-500"
+                gradient: "from-orange-500 to-red-500",
+                image: "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
               },
               {
                 icon: Zap,
                 title: "Notifiche Smart",
                 description: "Ricevi notifiche personalizzate per partite, tornei e opportunità di gioco in base alle tue preferenze",
-                gradient: "from-yellow-500 to-orange-500"
+                gradient: "from-yellow-500 to-orange-500",
+                image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
               }
             ].map((feature, index) => (
               <motion.div
@@ -240,11 +288,19 @@ const Index = () => {
                 whileHover={{ scale: 1.05 }}
                 className="group"
               >
-                <Card className="glass-card border-white/20 hover:border-white/40 transition-all duration-300 h-full">
-                  <CardHeader>
-                    <div className={`w-12 h-12 bg-gradient-to-r ${feature.gradient} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                <Card className="glass-card border-white/20 hover:border-white/40 transition-all duration-300 h-full overflow-hidden">
+                  <div className="relative">
+                    <img 
+                      src={feature.image}
+                      alt={feature.title}
+                      className="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className={`absolute top-4 left-4 w-12 h-12 bg-gradient-to-r ${feature.gradient} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
                       <feature.icon className="w-6 h-6 text-white" />
                     </div>
+                  </div>
+                  <CardHeader>
                     <CardTitle className="text-white text-xl mb-2">{feature.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -258,27 +314,35 @@ const Index = () => {
           </div>
         </motion.section>
 
-        {/* CTA Section */}
+        {/* CTA Section with Background Image */}
         <motion.section 
           className="container mx-auto px-6 py-20 text-center"
           variants={itemVariants}
         >
-          <div className="glass-card rounded-3xl p-12 max-w-4xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-bold gradient-text mb-6">
-              Pronto a rivoluzionare il tuo gioco?
-            </h2>
-            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Unisciti alla community più innovativa dello sport. Registrazione con solo 10 centesimi e inizia subito a giocare!
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
-                onClick={() => setShowLogin(true)}
-                size="lg"
-                className="bg-gradient-to-r from-green-500 to-cyan-600 hover:from-green-600 hover:to-cyan-700 text-white px-12 py-4 text-lg rounded-full shadow-2xl hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105"
-              >
-                <Star className="w-5 h-5 mr-2" />
-                Registrati ora - €0.10
-              </Button>
+          <div className="relative glass-card rounded-3xl p-12 max-w-4xl mx-auto overflow-hidden">
+            <div 
+              className="absolute inset-0 bg-cover bg-center opacity-20"
+              style={{
+                backgroundImage: `url('https://images.unsplash.com/photo-1554068865-24cecd4e34b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80')`
+              }}
+            />
+            <div className="relative z-10">
+              <h2 className="text-4xl md:text-5xl font-bold gradient-text mb-6">
+                Pronto a rivoluzionare il tuo gioco?
+              </h2>
+              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+                Unisciti alla community più innovativa dello sport. Registrazione con solo 10 centesimi e inizia subito a giocare!
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Button 
+                  onClick={() => setShowLogin(true)}
+                  size="lg"
+                  className="bg-gradient-to-r from-green-500 to-cyan-600 hover:from-green-600 hover:to-cyan-700 text-white px-12 py-4 text-lg rounded-full shadow-2xl hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105"
+                >
+                  <Star className="w-5 h-5 mr-2" />
+                  Registrati ora - €0.10
+                </Button>
+              </div>
             </div>
           </div>
         </motion.section>
