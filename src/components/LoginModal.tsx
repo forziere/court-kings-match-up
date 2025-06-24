@@ -143,7 +143,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                 </CardTitle>
                 <CardDescription className="text-blue-200">
                   {isRegistering 
-                    ? "Registrati per solo €0.10 e inizia subito a giocare!" 
+                    ? "Registrati per solo €1 e inizia subito a giocare!" 
                     : "Accedi al tuo account"
                   }
                 </CardDescription>
@@ -264,7 +264,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                     <div className="flex items-center gap-3 text-green-200">
                       <CreditCard className="w-5 h-5" />
                       <div>
-                        <div className="font-semibold">Costo registrazione: €0.10</div>
+                        <div className="font-semibold">Costo registrazione: €1.00</div>
                         <div className="text-sm opacity-80">Pagamento sicuro con Stripe</div>
                       </div>
                     </div>
@@ -283,7 +283,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                     </>
                   ) : (
                     <>
-                      {isRegistering ? "🚀 Registrati e Paga €0.10" : "🎯 Accedi"}
+                      {isRegistering ? "🚀 Registrati e Paga €1.00" : "🎯 Accedi"}
                     </>
                   )}
                 </Button>

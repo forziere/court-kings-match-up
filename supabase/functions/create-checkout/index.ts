@@ -80,7 +80,7 @@ serve(async (req) => {
               name: "Registrazione SportConnect",
               description: "Quota di registrazione per accedere alla piattaforma",
             },
-            unit_amount: 10, // €0.10 in centesimi
+            unit_amount: 100, // €1.00 in centesimi
           },
           quantity: 1,
         },

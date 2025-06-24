@@ -131,7 +131,7 @@ const Index = () => {
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
               L'app rivoluzionaria che connette giocatori del tuo livello, organizza tornei epici e prenota campi in tempo reale. 
-              <span className="text-cyan-300 font-semibold"> Solo 10 centesimi per iniziare!</span>
+              <span className="text-cyan-300 font-semibold"> Solo 1 euro per iniziare!</span>
             </p>
           </motion.div>
 
@@ -331,7 +331,7 @@ const Index = () => {
                 Pronto a rivoluzionare il tuo gioco?
               </h2>
               <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-                Unisciti alla community più innovativa dello sport. Registrazione con solo 10 centesimi e inizia subito a giocare!
+                Unisciti alla community più innovativa dello sport. Registrazione con solo 1 euro e inizia subito a giocare!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Button 
@@ -340,7 +340,7 @@ const Index = () => {
                   className="bg-gradient-to-r from-green-500 to-cyan-600 hover:from-green-600 hover:to-cyan-700 text-white px-12 py-4 text-lg rounded-full shadow-2xl hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105"
                 >
                   <Star className="w-5 h-5 mr-2" />
-                  Registrati ora - €0.10
+                  Registrati ora - €1.00
                 </Button>
               </div>
             </div>
