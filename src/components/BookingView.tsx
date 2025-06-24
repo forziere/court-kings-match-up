@@ -193,7 +193,7 @@ const BookingView = ({ user, onBack }) => {
           </Card>
         </motion.div>
 
-        {/* Loading State */}
+        {/* Stato di caricamento */}
         {isLoading && (
           <div className="flex items-center justify-center py-12">
             <div className="flex items-center gap-3 text-white">
@@ -236,7 +236,7 @@ const BookingView = ({ user, onBack }) => {
                   </CardHeader>
 
                   <CardContent className="space-y-4">
-                    {/* Rating e Sport */}
+                    {/* Valutazione e Sport */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Star className="w-4 h-4 text-yellow-400 fill-current" />
@@ -247,7 +247,7 @@ const BookingView = ({ user, onBack }) => {
                       </div>
                     </div>
 
-                    {/* Features */}
+                    {/* Servizi */}
                     {field.features && field.features.length > 0 && (
                       <div className="space-y-2">
                         <p className="text-white text-sm font-medium">Servizi inclusi:</p>
