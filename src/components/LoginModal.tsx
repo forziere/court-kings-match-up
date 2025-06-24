@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { X, Mail, Lock, User, MapPin, Star, CreditCard } from "lucide-react";
+import { X, Mail, Lock, User, MapPin, Star, CreditCard, Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const LoginModal = ({ isOpen, onClose, onLogin }) => {
   const [isRegistering, setIsRegistering] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,52 +24,82 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    if (isRegistering) {
-      // Simula la registrazione e il pagamento
-      if (!formData.name || !formData.email || !formData.password || !formData.level || !formData.sport) {
-        toast.error("Compila tutti i campi obbligatori");
-        return;
+    try {
+      if (isRegistering) {
+        // Validazione campi obbligatori
+        if (!formData.name || !formData.email || !formData.password || !formData.level || !formData.sport) {
+          toast.error("Compila tutti i campi obbligatori");
+          return;
+        }
+        
+        console.log("🚀 Iniziando registrazione con pagamento reale");
+        
+        // Chiama la Edge Function per creare il checkout Stripe
+        const { data, error } = await supabase.functions.invoke('create-checkout', {
+          body: {
+            userData: {
+              name: formData.name,
+              email: formData.email,
+              sport: formData.sport,
+              level: formData.level,
+              city: formData.city
+            }
+          }
+        });
+
+        if (error) {
+          console.error("❌ Errore chiamata Edge Function:", error);
+          toast.error("Errore durante la creazione del pagamento");
+          return;
+        }
+
+        if (data?.url) {
+          console.log("✅ URL checkout ricevuto, reindirizzamento...");
+          
+          // Salva i dati temporaneamente per dopo il pagamento
+          sessionStorage.setItem('pending_registration', JSON.stringify({
+            ...formData,
+            sessionId: data.sessionId
+          }));
+          
+          toast.success("Reindirizzamento al pagamento...");
+          
+          // Apri Stripe Checkout in una nuova scheda
+          window.open(data.url, '_blank');
+          
+        } else {
+          toast.error("Errore: URL di pagamento non ricevuto");
+        }
+        
+      } else {
+        // Login simulato (da implementare con Supabase Auth)
+        if (!formData.email || !formData.password) {
+          toast.error("Inserisci email e password");
+          return;
+        }
+        
+        const userData = {
+          id: Date.now(),
+          name: "Utente Esistente",
+          email: formData.email,
+          level: "Intermedio",
+          sport: "Calcio",
+          city: "Milano",
+          joinDate: "2024-01-01",
+          gamesPlayed: 15,
+          wins: 9,
+          rating: 1250
+        };
+        
+        onLogin(userData);
       }
-      
-      // Simula il pagamento di 10 centesimi
-      toast.success("Pagamento di €0.10 elaborato con successo!");
-      
-      const userData = {
-        id: Date.now(),
-        name: formData.name,
-        email: formData.email,
-        level: formData.level,
-        sport: formData.sport,
-        city: formData.city,
-        joinDate: new Date().toISOString(),
-        gamesPlayed: 0,
-        wins: 0,
-        rating: 1000
-      };
-      
-      onLogin(userData);
-    } else {
-      // Simula il login
-      if (!formData.email || !formData.password) {
-        toast.error("Inserisci email e password");
-        return;
-      }
-      
-      const userData = {
-        id: Date.now(),
-        name: "Utente Esistente",
-        email: formData.email,
-        level: "Intermedio",
-        sport: "Calcio",
-        city: "Milano",
-        joinDate: "2024-01-01",
-        gamesPlayed: 15,
-        wins: 9,
-        rating: 1250
-      };
-      
-      onLogin(userData);
+    } catch (error) {
+      console.error("❌ Errore durante la registrazione:", error);
+      toast.error("Errore durante la registrazione");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -134,6 +166,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                         onChange={(e) => handleInputChange("name", e.target.value)}
                         className="bg-white/10 border-white/30 text-white placeholder:text-blue-200"
                         required
+                        disabled={isLoading}
                       />
                     </div>
 
@@ -142,7 +175,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                         <Label htmlFor="sport" className="text-white">
                           Sport *
                         </Label>
-                        <Select onValueChange={(value) => handleInputChange("sport", value)}>
+                        <Select onValueChange={(value) => handleInputChange("sport", value)} disabled={isLoading}>
                           <SelectTrigger className="bg-white/10 border-white/30 text-white">
                             <SelectValue placeholder="Scegli sport" />
                           </SelectTrigger>
@@ -161,7 +194,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                           <Star className="w-4 h-4" />
                           Livello *
                         </Label>
-                        <Select onValueChange={(value) => handleInputChange("level", value)}>
+                        <Select onValueChange={(value) => handleInputChange("level", value)} disabled={isLoading}>
                           <SelectTrigger className="bg-white/10 border-white/30 text-white">
                             <SelectValue placeholder="Il tuo livello" />
                           </SelectTrigger>
@@ -186,6 +219,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                         value={formData.city}
                         onChange={(e) => handleInputChange("city", e.target.value)}
                         className="bg-white/10 border-white/30 text-white placeholder:text-blue-200"
+                        disabled={isLoading}
                       />
                     </div>
                   </>
@@ -204,6 +238,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     className="bg-white/10 border-white/30 text-white placeholder:text-blue-200"
                     required
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -220,6 +255,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                     onChange={(e) => handleInputChange("password", e.target.value)}
                     className="bg-white/10 border-white/30 text-white placeholder:text-blue-200"
                     required
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -229,7 +265,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                       <CreditCard className="w-5 h-5" />
                       <div>
                         <div className="font-semibold">Costo registrazione: €0.10</div>
-                        <div className="text-sm opacity-80">Pagamento sicuro elaborato automaticamente</div>
+                        <div className="text-sm opacity-80">Pagamento sicuro con Stripe</div>
                       </div>
                     </div>
                   </div>
@@ -237,9 +273,19 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
 
                 <Button 
                   type="submit"
+                  disabled={isLoading}
                   className="w-full bg-gradient-to-r from-green-500 to-cyan-600 hover:from-green-600 hover:to-cyan-700 text-white py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
                 >
-                  {isRegistering ? "🚀 Registrati e Paga €0.10" : "🎯 Accedi"}
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {isRegistering ? "Preparando pagamento..." : "Accedendo..."}
+                    </>
+                  ) : (
+                    <>
+                      {isRegistering ? "🚀 Registrati e Paga €0.10" : "🎯 Accedi"}
+                    </>
+                  )}
                 </Button>
               </form>
 
@@ -247,6 +293,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                 <button
                   onClick={() => setIsRegistering(!isRegistering)}
                   className="text-cyan-300 hover:text-cyan-200 transition-colors"
+                  disabled={isLoading}
                 >
                   {isRegistering 
                     ? "Hai già un account? Accedi qui" 
