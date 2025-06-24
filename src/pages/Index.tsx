@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
@@ -143,7 +144,7 @@ const Index = () => {
           >
             <div className="glass-card rounded-2xl overflow-hidden">
               <img 
-                src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                src="https://images.pexels.com/photos/209977/pexels-photo-209977.jpeg?auto=compress&cs=tinysrgb&w=800"
                 alt="Padel Players in Action"
                 className="w-full h-48 object-cover"
               />
@@ -154,7 +155,7 @@ const Index = () => {
             </div>
             <div className="glass-card rounded-2xl overflow-hidden">
               <img 
-                src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                src="https://images.pexels.com/photos/1619836/pexels-photo-1619836.jpeg?auto=compress&cs=tinysrgb&w=800"
                 alt="Tennis Court"
                 className="w-full h-48 object-cover"
               />
@@ -165,8 +166,8 @@ const Index = () => {
             </div>
             <div className="glass-card rounded-2xl overflow-hidden">
               <img 
-                src="https://images.unsplash.com/photo-1530549387789-4c1017266635?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-                alt="Padel Winner with Trophy"
+                src="https://images.pexels.com/photos/949590/pexels-photo-949590.jpeg?auto=compress&cs=tinysrgb&w=800"
+                alt="Winner with Trophy"
                 className="w-full h-48 object-cover"
               />
               <div className="p-4">
