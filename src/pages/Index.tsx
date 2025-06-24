@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
@@ -19,12 +18,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import LoginModal from "@/components/LoginModal";
 import DashboardView from "@/components/DashboardView";
+import SportSelector from "@/components/SportSelector";
 import { toast } from "sonner";
 
 const Index = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [showSportSelector, setShowSportSelector] = useState(false);
+  const [selectedSport, setSelectedSport] = useState(null);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -134,6 +136,36 @@ const Index = () => {
               <span className="text-cyan-300 font-semibold"> Solo 1 euro per iniziare!</span>
             </p>
           </motion.div>
+
+          {/* Sport Selector Toggle */}
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="mb-12"
+          >
+            <Button 
+              onClick={() => setShowSportSelector(!showSportSelector)}
+              size="lg"
+              className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white px-8 py-4 text-lg rounded-full shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105 mb-8"
+            >
+              <Gamepad2 className="w-5 h-5 mr-2" />
+              {showSportSelector ? "Nascondi Sport" : "Esplora gli Sport"}
+            </Button>
+          </motion.div>
+
+          {/* Sport Selector */}
+          {showSportSelector && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.5 }}
+              className="mb-16"
+            >
+              <SportSelector onSportSelect={setSelectedSport} />
+            </motion.div>
+          )}
 
           {/* Hero Images */}
           <motion.div
