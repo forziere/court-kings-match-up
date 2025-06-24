@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
-  Football, 
+  Footprints, 
   Zap, 
   Trophy,
   Users,
@@ -61,7 +61,7 @@ const sports: Sport[] = [
   {
     id: "calcio",
     name: "Calcio",
-    icon: Football,
+    icon: Footprints,
     color: "text-orange-400",
     gradient: "from-orange-500 to-red-500",
     description: "Il re degli sport! Unisciti alla community calcistica più appassionata.",
