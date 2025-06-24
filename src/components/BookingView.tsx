@@ -11,7 +11,8 @@ import {
   CheckCircle,
   Star,
   Filter,
-  Loader2
+  Loader2,
+  X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
