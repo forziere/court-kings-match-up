@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
@@ -32,11 +31,12 @@ const DashboardView = ({ user, onLogout }) => {
     {
       id: 1,
       opponent: "Marco R.",
-      sport: "Calcio",
+      sport: "Padel",
       time: "Oggi 18:00",
       field: "Campo Centrale",
       level: "Intermedio",
-      status: "confirmed"
+      status: "confirmed",
+      image: "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
     },
     {
       id: 2,
@@ -45,7 +45,8 @@ const DashboardView = ({ user, onLogout }) => {
       time: "Domani 16:30",
       field: "Campo 2",
       level: "Avanzato",
-      status: "pending"
+      status: "pending",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
     }
   ];
 
@@ -53,11 +54,12 @@ const DashboardView = ({ user, onLogout }) => {
     {
       id: 1,
       name: "Torneo Primavera 2024",
-      sport: "Calcio",
+      sport: "Padel",
       participants: 16,
       prize: "Trofeo + Voucher €50",
       startDate: "25 Mar 2024",
-      status: "open"
+      status: "open",
+      image: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
     },
     {
       id: 2,
@@ -66,7 +68,8 @@ const DashboardView = ({ user, onLogout }) => {
       participants: 8,
       prize: "Medaglia d'oro",
       startDate: "1 Apr 2024",
-      status: "starting_soon"
+      status: "starting_soon",
+      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
     }
   ];
 
@@ -100,14 +103,20 @@ const DashboardView = ({ user, onLogout }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800">
-      {/* Header */}
+      {/* Header with Background Image */}
       <motion.header 
-        className="bg-white/10 backdrop-blur-lg border-b border-white/20"
+        className="relative bg-white/10 backdrop-blur-lg border-b border-white/20 overflow-hidden"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="container mx-auto px-6 py-4">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-10"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1554068865-24cecd4e34b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80')`
+          }}
+        />
+        <div className="relative z-10 container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="w-10 h-10 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-xl flex items-center justify-center">
@@ -163,6 +172,43 @@ const DashboardView = ({ user, onLogout }) => {
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-6">
+            {/* Hero Section with Large Background Image */}
+            <motion.div
+              className="relative glass-card rounded-3xl overflow-hidden"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <div 
+                className="absolute inset-0 bg-cover bg-center"
+                style={{
+                  backgroundImage: `url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80')`
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40" />
+              <div className="relative z-10 p-8">
+                <h2 className="text-3xl font-bold text-white mb-4">Benvenuto nel tuo campo</h2>
+                <p className="text-blue-100 text-lg mb-6">Pronto per la prossima sfida? Trova avversari, prenota campi e vinci tornei!</p>
+                <div className="flex gap-4">
+                  <Button 
+                    onClick={() => setActiveTab("booking")}
+                    className="bg-gradient-to-r from-green-500 to-cyan-600 hover:from-green-600 hover:to-cyan-700"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Prenota ora
+                  </Button>
+                  <Button 
+                    onClick={() => toast.success("Ricerca giocatori in corso...")}
+                    variant="outline"
+                    className="border-white/30 text-white hover:bg-white/10"
+                  >
+                    <Target className="w-4 h-4 mr-2" />
+                    Trova avversari
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+
             {/* Stats Cards */}
             <motion.div 
               className="grid grid-cols-1 md:grid-cols-4 gap-6"
@@ -229,7 +275,7 @@ const DashboardView = ({ user, onLogout }) => {
 
             {/* Main Content */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Prossime Partite */}
+              {/* Prossime Partite with Images */}
               <motion.div
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -254,30 +300,41 @@ const DashboardView = ({ user, onLogout }) => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {mockMatches.length > 0 ? mockMatches.map((match) => (
-                      <div key={match.id} className="bg-white/5 rounded-lg p-4 border border-white/10">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                              <User className="w-5 h-5 text-white" />
+                      <div key={match.id} className="relative bg-white/5 rounded-lg overflow-hidden border border-white/10">
+                        <div className="flex">
+                          <div className="w-20 h-20 flex-shrink-0">
+                            <img 
+                              src={match.image} 
+                              alt={match.sport}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="flex-1 p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                                  <User className="w-4 h-4 text-white" />
+                                </div>
+                                <div>
+                                  <p className="text-white font-medium">vs {match.opponent}</p>
+                                  <p className="text-blue-200 text-sm">{match.sport}</p>
+                                </div>
+                              </div>
+                              <Badge className={`${getStatusColor(match.status)} text-white`}>
+                                {match.status === "confirmed" ? "Confermata" : "In attesa"}
+                              </Badge>
                             </div>
-                            <div>
-                              <p className="text-white font-medium">vs {match.opponent}</p>
-                              <p className="text-blue-200 text-sm">{match.sport}</p>
+                            <div className="flex items-center gap-4 text-sm text-blue-200">
+                              <span className="flex items-center gap-1">
+                                <Clock className="w-4 h-4" />
+                                {match.time}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <MapPin className="w-4 h-4" />
+                                {match.field}
+                              </span>
                             </div>
                           </div>
-                          <Badge className={`${getStatusColor(match.status)} text-white`}>
-                            {match.status === "confirmed" ? "Confermata" : "In attesa"}
-                          </Badge>
-                        </div>
-                        <div className="flex items-center gap-4 text-sm text-blue-200">
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-4 h-4" />
-                            {match.time}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <MapPin className="w-4 h-4" />
-                            {match.field}
-                          </span>
                         </div>
                       </div>
                     )) : (
@@ -296,7 +353,7 @@ const DashboardView = ({ user, onLogout }) => {
                 </Card>
               </motion.div>
 
-              {/* Tornei Disponibili */}
+              {/* Tornei Disponibili with Images */}
               <motion.div
                 initial={{ x: 20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -321,25 +378,36 @@ const DashboardView = ({ user, onLogout }) => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {mockTournaments.map((tournament) => (
-                      <div key={tournament.id} className="bg-white/5 rounded-lg p-4 border border-white/10">
-                        <div className="flex items-center justify-between mb-2">
-                          <div>
-                            <p className="text-white font-medium">{tournament.name}</p>
-                            <p className="text-blue-200 text-sm">{tournament.sport}</p>
+                      <div key={tournament.id} className="relative bg-white/5 rounded-lg overflow-hidden border border-white/10">
+                        <div className="flex">
+                          <div className="w-20 h-20 flex-shrink-0">
+                            <img 
+                              src={tournament.image} 
+                              alt={tournament.sport}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
-                          <Badge className={`${getStatusColor(tournament.status)} text-white`}>
-                            {tournament.status === "open" ? "Aperto" : "Inizia presto"}
-                          </Badge>
-                        </div>
-                        <div className="space-y-2 text-sm text-blue-200">
-                          <div className="flex items-center justify-between">
-                            <span className="flex items-center gap-1">
-                              <Users className="w-4 h-4" />
-                              {tournament.participants} partecipanti
-                            </span>
-                            <span>{tournament.startDate}</span>
+                          <div className="flex-1 p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <div>
+                                <p className="text-white font-medium">{tournament.name}</p>
+                                <p className="text-blue-200 text-sm">{tournament.sport}</p>
+                              </div>
+                              <Badge className={`${getStatusColor(tournament.status)} text-white`}>
+                                {tournament.status === "open" ? "Aperto" : "Inizia presto"}
+                              </Badge>
+                            </div>
+                            <div className="space-y-2 text-sm text-blue-200">
+                              <div className="flex items-center justify-between">
+                                <span className="flex items-center gap-1">
+                                  <Users className="w-4 h-4" />
+                                  {tournament.participants} partecipanti
+                                </span>
+                                <span>{tournament.startDate}</span>
+                              </div>
+                              <p className="text-yellow-300">🏆 {tournament.prize}</p>
+                            </div>
                           </div>
-                          <p className="text-yellow-300">🏆 {tournament.prize}</p>
                         </div>
                       </div>
                     ))}
@@ -348,7 +416,7 @@ const DashboardView = ({ user, onLogout }) => {
               </motion.div>
             </div>
 
-            {/* Quick Actions */}
+            {/* Quick Actions with Background Images */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -363,27 +431,56 @@ const DashboardView = ({ user, onLogout }) => {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Button 
-                      onClick={() => setActiveTab("booking")}
-                      className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 h-20 flex-col gap-2"
-                    >
-                      <Calendar className="w-6 h-6" />
-                      Prenota Campo
-                    </Button>
-                    <Button 
-                      onClick={() => toast.success("Ricerca giocatori in corso...")}
-                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 h-20 flex-col gap-2"
-                    >
-                      <Target className="w-6 h-6" />
-                      Trova Avversari
-                    </Button>
-                    <Button 
-                      onClick={() => setActiveTab("tournaments")}
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 h-20 flex-col gap-2"
-                    >
-                      <Trophy className="w-6 h-6" />
-                      Tornei
-                    </Button>
+                    <div className="relative overflow-hidden rounded-xl">
+                      <div 
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{
+                          backgroundImage: `url('https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80')`
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-blue-600/80 to-blue-400/60" />
+                      <Button 
+                        onClick={() => setActiveTab("booking")}
+                        className="relative z-10 w-full bg-transparent hover:bg-white/10 border-0 h-20 flex-col gap-2 text-white"
+                      >
+                        <Calendar className="w-6 h-6" />
+                        Prenota Campo
+                      </Button>
+                    </div>
+                    
+                    <div className="relative overflow-hidden rounded-xl">
+                      <div 
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{
+                          backgroundImage: `url('https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80')`
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-green-600/80 to-green-400/60" />
+                      <Button 
+                        onClick={() => toast.success("Ricerca giocatori in corso...")}
+                        className="relative z-10 w-full bg-transparent hover:bg-white/10 border-0 h-20 flex-col gap-2 text-white"
+                      >
+                        <Target className="w-6 h-6" />
+                        Trova Avversari
+                      </Button>
+                    </div>
+                    
+                    <div className="relative overflow-hidden rounded-xl">
+                      <div 
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{
+                          backgroundImage: `url('https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80')`
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-purple-600/80 to-purple-400/60" />
+                      <Button 
+                        onClick={() => setActiveTab("tournaments")}
+                        className="relative z-10 w-full bg-transparent hover:bg-white/10 border-0 h-20 flex-col gap-2 text-white"
+                      >
+                        <Trophy className="w-6 h-6" />
+                        Tornei
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
