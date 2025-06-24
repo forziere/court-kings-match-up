@@ -8,7 +8,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-const PaymentSuccess = () => {
+interface PaymentSuccessProps {
+  onLogin?: (userData: any) => void;
+}
+
+const PaymentSuccess = ({ onLogin }: PaymentSuccessProps = {}) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [isVerifying, setIsVerifying] = useState(true);
@@ -49,9 +53,35 @@ const PaymentSuccess = () => {
           const userData = JSON.parse(pendingData);
           console.log("👤 Dati utente recuperati:", userData);
           
-          // Qui potresti chiamare onLogin se necessario
-          // Per ora pulisci i dati temporanei
+          // Crea l'oggetto utente per il login automatico
+          const userLoginData = {
+            id: Date.now(),
+            name: userData.name,
+            email: userData.email,
+            level: userData.level,
+            sport: userData.sport,
+            city: userData.city || "",
+            joinDate: new Date().toISOString().split('T')[0],
+            gamesPlayed: 0,
+            wins: 0,
+            rating: 1000,
+            paymentCompleted: true
+          };
+
+          // Chiama onLogin se disponibile per aggiornare lo stato globale
+          if (onLogin) {
+            onLogin(userLoginData);
+            // Salva anche nel localStorage per persistenza
+            localStorage.setItem('sportapp_user', JSON.stringify(userLoginData));
+          }
+          
+          // Pulisci i dati temporanei
           sessionStorage.removeItem('pending_registration');
+          
+          // Reindirizza alla dashboard dopo 2 secondi
+          setTimeout(() => {
+            navigate('/');
+          }, 2000);
         }
       } else {
         toast.error("Pagamento non completato");
@@ -98,7 +128,7 @@ const PaymentSuccess = () => {
             
             <CardDescription className="text-blue-200">
               {isVerifying ? "Stiamo verificando il tuo pagamento, attendere..." :
-               verificationComplete ? "Benvenuto in SportConnect! La tua registrazione è completa." :
+               verificationComplete ? "Benvenuto in SportConnect! Ti stiamo reindirizzando alla dashboard..." :
                "Il pagamento non è stato completato. Riprova più tardi."}
             </CardDescription>
           </CardHeader>
@@ -114,9 +144,9 @@ const PaymentSuccess = () => {
                   <div className="bg-gradient-to-r from-green-500/20 to-cyan-500/20 border border-green-400/30 rounded-lg p-4 mb-6">
                     <h3 className="text-green-200 font-semibold mb-2">Registrazione completata!</h3>
                     <ul className="text-green-100 text-sm space-y-1">
-                      <li>✅ Pagamento di €0.10 elaborato</li>
+                      <li>✅ Pagamento di €1.00 elaborato</li>
                       <li>✅ Account SportConnect attivato</li>
-                      <li>✅ Accesso completo alla piattaforma</li>
+                      <li>✅ Reindirizzamento automatico in corso...</li>
                     </ul>
                   </div>
                 )}

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
@@ -21,10 +22,17 @@ import DashboardView from "@/components/DashboardView";
 import SportSelector from "@/components/SportSelector";
 import { toast } from "sonner";
 
-const Index = () => {
+interface IndexProps {
+  user?: any;
+  isLoggedIn?: boolean;
+  onLogin?: (userData: any) => void;
+  onLogout?: () => void;
+}
+
+const Index = ({ user: propUser, isLoggedIn: propIsLoggedIn, onLogin, onLogout }: IndexProps) => {
   const [showLogin, setShowLogin] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(propIsLoggedIn || false);
+  const [user, setUser] = useState(propUser || null);
   const [showSportSelector, setShowSportSelector] = useState(false);
   const [selectedSport, setSelectedSport] = useState(null);
 
@@ -50,16 +58,28 @@ const Index = () => {
   };
 
   useEffect(() => {
-    // Simula il controllo dello stato di login
-    const checkAuth = () => {
-      const savedUser = localStorage.getItem('sportapp_user');
-      if (savedUser) {
-        setUser(JSON.parse(savedUser));
-        setIsLoggedIn(true);
-      }
-    };
-    checkAuth();
-  }, []);
+    // Se i props cambiano, aggiorna lo stato locale
+    if (propUser !== user) {
+      setUser(propUser);
+    }
+    if (propIsLoggedIn !== isLoggedIn) {
+      setIsLoggedIn(propIsLoggedIn);
+    }
+  }, [propUser, propIsLoggedIn]);
+
+  useEffect(() => {
+    // Simula il controllo dello stato di login se non gestito dai props
+    if (onLogin === undefined) {
+      const checkAuth = () => {
+        const savedUser = localStorage.getItem('sportapp_user');
+        if (savedUser) {
+          setUser(JSON.parse(savedUser));
+          setIsLoggedIn(true);
+        }
+      };
+      checkAuth();
+    }
+  }, [onLogin]);
 
   const handleLogin = (userData) => {
     setUser(userData);
@@ -67,6 +87,11 @@ const Index = () => {
     localStorage.setItem('sportapp_user', JSON.stringify(userData));
     setShowLogin(false);
     toast.success("Benvenuto! Registrazione completata con successo!");
+    
+    // Chiama onLogin se fornito dai props
+    if (onLogin) {
+      onLogin(userData);
+    }
   };
 
   const handleLogout = () => {
@@ -74,6 +99,11 @@ const Index = () => {
     setIsLoggedIn(false);
     localStorage.removeItem('sportapp_user');
     toast.success("Logout effettuato!");
+    
+    // Chiama onLogout se fornito dai props
+    if (onLogout) {
+      onLogout();
+    }
   };
 
   if (isLoggedIn && user) {
