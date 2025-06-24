@@ -53,6 +53,51 @@ export type Database = {
           },
         ]
       }
+      sports_facilities: {
+        Row: {
+          available_hours: string[] | null
+          city: string
+          created_at: string | null
+          features: string[] | null
+          id: string
+          image_url: string | null
+          location: string
+          name: string
+          price_per_hour: number
+          rating: number | null
+          sport: string
+          updated_at: string | null
+        }
+        Insert: {
+          available_hours?: string[] | null
+          city: string
+          created_at?: string | null
+          features?: string[] | null
+          id?: string
+          image_url?: string | null
+          location: string
+          name: string
+          price_per_hour: number
+          rating?: number | null
+          sport: string
+          updated_at?: string | null
+        }
+        Update: {
+          available_hours?: string[] | null
+          city?: string
+          created_at?: string | null
+          features?: string[] | null
+          id?: string
+          image_url?: string | null
+          location?: string
+          name?: string
+          price_per_hour?: number
+          rating?: number | null
+          sport?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           city: string | null
