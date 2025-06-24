@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
@@ -155,8 +154,8 @@ const Index = () => {
             </div>
             <div className="glass-card rounded-2xl overflow-hidden">
               <img 
-                src="https://images.pexels.com/photos/1619836/pexels-photo-1619836.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt="Tennis Court"
+                src="/lovable-uploads/eaf27e54-66aa-49f2-b23d-704145ba50ad.png"
+                alt="Campi Premium"
                 className="w-full h-48 object-cover"
               />
               <div className="p-4">
