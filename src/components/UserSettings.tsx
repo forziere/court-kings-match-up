@@ -119,29 +119,53 @@ const UserSettings = ({ isOpen, onClose, user, onProfileUpdate }: UserSettingsPr
 
   const handleSave = async () => {
     try {
+      console.log('🔄 Starting save process...');
+      console.log('👤 Current user:', user);
+      
+      // Verifica autenticazione
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      console.log('🔐 Session check:', { session: !!session, sessionError });
+      
+      if (sessionError || !session) {
+        throw new Error('Non autenticato');
+      }
+
       // Aggiorna profilo utente
+      console.log('📝 Updating profile...');
       const { error: profileError } = await supabase
         .from('profiles')
         .update({
           name: profileData.name,
-          sport: profileData.sport,
+          sport: profileData.sport,  
           level: profileData.level,
           city: profileData.city
         })
         .eq('id', user.id);
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error('❌ Profile update error:', profileError);
+        throw profileError;
+      }
 
       // Controlla se esiste già user_stats
-      const { data: existingStats } = await supabase
+      console.log('🔍 Checking existing user_stats...');
+      const { data: existingStats, error: checkError } = await supabase
         .from('user_stats')
         .select('id')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
+
+      if (checkError) {
+        console.error('❌ Check error:', checkError);
+        throw checkError;
+      }
+
+      console.log('📊 Existing stats:', existingStats);
 
       if (existingStats) {
         // Aggiorna record esistente
-        const { error: updateError } = await supabase
+        console.log('🔄 Updating existing stats...');
+        const { error: updateError, data: updateData } = await supabase
           .from('user_stats')
           .update({
             user_emoji: profileData.userEmoji,
@@ -150,12 +174,15 @@ const UserSettings = ({ isOpen, onClose, user, onProfileUpdate }: UserSettingsPr
             preferred_position: profileData.preferredPosition,
             preferred_match_type: profileData.preferredMatchType
           })
-          .eq('user_id', user.id);
+          .eq('user_id', user.id)
+          .select();
 
+        console.log('📝 Update result:', { updateError, updateData });
         if (updateError) throw updateError;
       } else {
         // Crea nuovo record
-        const { error: insertError } = await supabase
+        console.log('➕ Creating new stats...');
+        const { error: insertError, data: insertData } = await supabase
           .from('user_stats')
           .insert({
             user_id: user.id,
@@ -164,8 +191,10 @@ const UserSettings = ({ isOpen, onClose, user, onProfileUpdate }: UserSettingsPr
             preferred_hand: profileData.preferredHand,
             preferred_position: profileData.preferredPosition,
             preferred_match_type: profileData.preferredMatchType
-          });
+          })
+          .select();
 
+        console.log('📝 Insert result:', { insertError, insertData });
         if (insertError) throw insertError;
       }
 
@@ -176,8 +205,8 @@ const UserSettings = ({ isOpen, onClose, user, onProfileUpdate }: UserSettingsPr
         window.location.reload();
       }, 1000);
     } catch (error) {
-      console.error('Error saving profile:', error);
-      toast.error("Errore nel salvataggio del profilo");
+      console.error('💥 Error saving profile:', error);
+      toast.error(`Errore nel salvataggio del profilo: ${error.message}`);
     }
   };
 
