@@ -44,6 +44,10 @@ const DashboardView = ({ user, onLogout }) => {
   }, [showUserManagement]);
 
   useEffect(() => {
+    console.log('🔍 activeTab state changed:', activeTab);
+  }, [activeTab]);
+
+  useEffect(() => {
     checkUserRole();
   }, [user]);
 
@@ -159,7 +163,7 @@ const DashboardView = ({ user, onLogout }) => {
     }
   };
 
-  console.log('🎯 DashboardView render - showUserManagement:', showUserManagement, 'userRole:', userRole);
+  console.log('🎯 DashboardView render - showUserManagement:', showUserManagement, 'userRole:', userRole, 'activeTab:', activeTab);
 
   if (showUserManagement) {
     console.log('🎯 Showing UserManagement component');
@@ -170,10 +174,12 @@ const DashboardView = ({ user, onLogout }) => {
   }
 
   if (activeTab === "admin" && userRole === "admin") {
+    console.log('🎯 Showing AdminDashboard');
     return <AdminDashboard user={user} onBack={() => setActiveTab("dashboard")} onShowUserManagement={() => setShowUserManagement(true)} />;
   }
 
   if (activeTab === "gestore" && (userRole === "admin" || userRole === "moderator")) {
+    console.log('🎯 Showing GestoreDashboard');
     return <GestoreDashboard user={user} onBack={() => setActiveTab("dashboard")} />;
   }
 
