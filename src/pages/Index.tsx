@@ -41,6 +41,7 @@ const Index = ({ user: propUser, isLoggedIn: propIsLoggedIn, onLogin, onLogout }
   const [selectedSport, setSelectedSport] = useState(null);
   const [showBooking, setShowBooking] = useState(false);
   const [showCitySearch, setShowCitySearch] = useState(false);
+  const [selectedFieldForBooking, setSelectedFieldForBooking] = useState(null);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -112,12 +113,21 @@ const Index = ({ user: propUser, isLoggedIn: propIsLoggedIn, onLogin, onLogout }
     }
   };
 
+  const handleFieldBooking = (field) => {
+    setSelectedFieldForBooking(field);
+    setShowCitySearch(false);
+    setShowBooking(true);
+  };
+
   if (showCitySearch) {
-    return <CityFieldsSearch onBack={() => setShowCitySearch(false)} />;
+    return <CityFieldsSearch onBack={() => setShowCitySearch(false)} onBookField={handleFieldBooking} />;
   }
 
   if (showBooking) {
-    return <CalendarBookingView user={user} onBack={() => setShowBooking(false)} />;
+    return <CalendarBookingView user={user} onBack={() => {
+      setShowBooking(false);
+      setSelectedFieldForBooking(null);
+    }} />;
   }
 
   if (isLoggedIn && user) {

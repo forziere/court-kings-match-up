@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import FieldDetailView from './FieldDetailView';
 
 interface Field {
   id: string;
@@ -67,25 +68,38 @@ const luccaFields: Field[] = [
   {
     id: '5',
     name: 'Circolo El Niño padel e calcetto',
-    address: 'Via Dei Gianni 303',
+    address: 'Via Dei Gianni 303, 55100 Lucca',
     city: 'Lucca',
     sport: 'Padel/Calcetto',
     rating: 4.4,
     priceRange: '20-30€/h',
-    features: ['Multi-sport', 'Calcetto', 'Padel', 'Parcheggio'],
+    features: [
+      'Parcheggio Gratuito', 
+      'Noleggio Attrezzatura', 
+      'Bar/Ristorante', 
+      'Spogliatoi', 
+      'WiFi', 
+      'Area Giochi', 
+      'Sala Eventi',
+      '3 Campi Padel (2 coperti + 1 outdoor)',
+      'Campo Calcio a 5',
+      'Campo Calcio a 7'
+    ],
     image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   }
 ];
 
 interface CityFieldsSearchProps {
   onBack: () => void;
+  onBookField?: (field: Field) => void;
 }
 
-const CityFieldsSearch = ({ onBack }: CityFieldsSearchProps) => {
+const CityFieldsSearch = ({ onBack, onBookField }: CityFieldsSearchProps) => {
   const [searchCity, setSearchCity] = useState('');
   const [fields, setFields] = useState<Field[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [selectedField, setSelectedField] = useState<Field | null>(null);
 
   const handleSearch = async () => {
     if (!searchCity.trim()) return;
@@ -105,9 +119,24 @@ const CityFieldsSearch = ({ onBack }: CityFieldsSearchProps) => {
   };
 
   const handleFieldSelect = (field: Field) => {
-    // Qui potresti navigare alla prenotazione del campo specifico
-    console.log('Campo selezionato:', field);
+    setSelectedField(field);
   };
+
+  const handleBookNow = (field: Field) => {
+    if (onBookField) {
+      onBookField(field);
+    }
+  };
+
+  if (selectedField) {
+    return (
+      <FieldDetailView 
+        field={selectedField}
+        onBack={() => setSelectedField(null)}
+        onBookNow={handleBookNow}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800">
