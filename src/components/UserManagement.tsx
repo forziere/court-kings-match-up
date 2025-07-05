@@ -83,12 +83,14 @@ const UserManagement = ({ onBack, refreshKey }: UserManagementProps) => {
       if (usersError) {
         console.error('❌ UserManagement: Error loading users:', usersError);
         toast.error("Errore nel caricamento utenti: " + usersError.message);
+        setLoading(false);
         return;
       }
 
       if (!usersData || usersData.length === 0) {
         console.log('⚠️ UserManagement: Nessun utente trovato');
         setUsers([]);
+        setLoading(false);
         return;
       }
 

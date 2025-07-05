@@ -173,13 +173,14 @@ const UserSettings = ({ isOpen, onClose, user, onProfileUpdate }: UserSettingsPr
       
       // Chiama il callback di aggiornamento PRIMA del reload
       if (onProfileUpdate) {
+        console.log('🔥 UserSettings: Calling onProfileUpdate callback');
         onProfileUpdate();
       }
       
-      // Forza reload dei dati dopo un breve delay
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
+      // Rimuovo il reload automatico per testare solo il refresh
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 500);
     } catch (error) {
       console.error('💥 Error saving profile:', error);
       toast.error(`Errore nel salvataggio del profilo: ${error.message}`);
