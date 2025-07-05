@@ -26,6 +26,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import heroSportsPoster from "@/assets/hero-sports-video-poster.jpg";
 
 const CalendarBookingView = ({ user, onBack }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -272,16 +273,11 @@ const CalendarBookingView = ({ user, onBack }) => {
               {/* Hero Video Section */}
               <Card className="glass-card border-white/20 mb-6 overflow-hidden">
                 <div className="relative h-48 bg-gradient-to-r from-blue-600 to-purple-600">
-                  <video 
-                    autoPlay 
-                    muted 
-                    loop 
-                    className="absolute inset-0 w-full h-full object-cover opacity-60"
-                    poster="/placeholder-video-poster.jpg"
-                  >
-                    <source src="/hero-sports-video.mp4" type="video/mp4" />
-                    {/* Fallback gradient if video doesn't load */}
-                  </video>
+                  <img 
+                    src={heroSportsPoster}
+                    alt="Complesso Sportivo Moderno"
+                    className="absolute inset-0 w-full h-full object-cover opacity-80"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent flex items-center">
                     <div className="p-6">
                       <h2 className="text-3xl font-bold text-white mb-2">Prenota il tuo campo</h2>
