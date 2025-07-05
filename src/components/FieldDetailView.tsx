@@ -129,22 +129,16 @@ const FieldDetailView = ({ field, onBack, onBookNow }: FieldDetailViewProps) => 
                   <CardHeader>
                     <CardTitle className="text-white">Informazioni Dettagliate</CardTitle>
                     <CardDescription className="text-blue-200">
-                      Benvenuto a El Niño! Il nostro circolo ha tutto quello che serve per il tuo sport.
+                      Benvenuto a El Niño !!
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="text-blue-100">
                       <p className="mb-3">
-                        🏟️ <strong>Campi Padel:</strong> 2 campi al coperto (campo 1 e campo 2) + 1 campo all'aperto (campo 3)
-                      </p>
-                      <p className="mb-3">
-                        ⚽ <strong>Campi Calcio:</strong> Campo a 5 e campo a 7 in erba sintetica di ultima generazione
-                      </p>
-                      <p className="mb-3">
-                        🏓 <strong>Attrezzatura:</strong> Ampia gamma di pale in prova o a noleggio per tutti i livelli
+                        Il nostro circolo ha 2 campi da padel al coperto (campo 1 e campo 2) e un campo all'aperto (campo 3). Abbiamo anche una vasta gamma di pale in prova o a noleggio per tutti i livelli.
                       </p>
                       <p className="mb-4">
-                        🎉 <strong>Eventi:</strong> Ampia sala con bar prenotabile per feste ed eventi
+                        Se invece vuoi giocare a calcio abbiamo un campo a 5 e un campo a 7 in erba sintetica di ultima generazione.
                       </p>
                     </div>
 
@@ -155,9 +149,20 @@ const FieldDetailView = ({ field, onBack, onBookNow }: FieldDetailViewProps) => 
                       </h4>
                       <div className="space-y-2 text-blue-200 text-sm">
                         <p>📞 <strong>Padel:</strong> 347 9904012 (segreteria circolo)</p>
-                        <p>⚽ <strong>Calcio:</strong> 339 5723243 (Massimiliano Pisciotta)</p>
-                        <p>🎉 <strong>Eventi:</strong> 392 5029442 (Carla)</p>
+                        <p>⚽ <strong>Calcio:</strong> 3395723243 (Massimiliano Pisciotta)</p>
                       </div>
+                    </div>
+
+                    <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                      <h4 className="text-white font-semibold mb-2">
+                        🎉 Sala Eventi
+                      </h4>
+                      <p className="text-blue-200 text-sm mb-2">
+                        Abbiamo un'ampia sala con bar prenotabile per feste ed eventi.
+                      </p>
+                      <p className="text-blue-200 text-sm">
+                        📞 <strong>Per info:</strong> 3925029442 (Carla)
+                      </p>
                     </div>
 
                     <div className="bg-white/5 rounded-lg p-4 border border-white/10">
