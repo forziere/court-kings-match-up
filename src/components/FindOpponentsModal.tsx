@@ -71,7 +71,7 @@ const FindOpponentsModal = ({ isOpen, onClose, user, refreshKey }: FindOpponents
             .from('user_stats')
             .select('elo_rating, games_played, wins, skill_level, user_emoji')
             .eq('user_id', opponent.id)
-            .single();
+            .maybeSingle();
           
           return {
             ...opponent,
