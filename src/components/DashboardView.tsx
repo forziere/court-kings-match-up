@@ -24,6 +24,7 @@ import BookingView from "@/components/BookingView";
 import TournamentView from "@/components/TournamentView";
 import AdminDashboard from "@/components/AdminDashboard";
 import GestoreDashboard from "@/components/GestoreDashboard";
+import UserManagement from "@/components/UserManagement";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import UserSettings from "./UserSettings";
@@ -35,6 +36,7 @@ const DashboardView = ({ user, onLogout }) => {
   const [isLoadingRole, setIsLoadingRole] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [showFindOpponents, setShowFindOpponents] = useState(false);
+  const [showUserManagement, setShowUserManagement] = useState(false);
 
   useEffect(() => {
     checkUserRole();
@@ -153,11 +155,15 @@ const DashboardView = ({ user, onLogout }) => {
   };
 
   if (activeTab === "admin" && userRole === "admin") {
-    return <AdminDashboard user={user} onBack={() => setActiveTab("dashboard")} />;
+    return <AdminDashboard user={user} onBack={() => setActiveTab("dashboard")} onShowUserManagement={() => setShowUserManagement(true)} />;
   }
 
   if (activeTab === "gestore" && (userRole === "admin" || userRole === "moderator")) {
     return <GestoreDashboard user={user} onBack={() => setActiveTab("dashboard")} />;
+  }
+
+  if (showUserManagement) {
+    return <UserManagement onBack={() => setShowUserManagement(false)} />;
   }
 
   if (activeTab === "booking") {

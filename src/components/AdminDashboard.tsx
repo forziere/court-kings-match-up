@@ -38,7 +38,7 @@ interface AdminStats {
   };
 }
 
-const AdminDashboard = ({ user, onBack }) => {
+const AdminDashboard = ({ user, onBack, onShowUserManagement }) => {
   const [stats, setStats] = useState<AdminStats>({});
   const [loading, setLoading] = useState(true);
 
@@ -240,7 +240,7 @@ const AdminDashboard = ({ user, onBack }) => {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <Button 
-            onClick={() => handleQuickAction('Gestione Utenti')}
+            onClick={onShowUserManagement}
             className="bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white font-bold h-16 rounded-xl text-sm uppercase tracking-wider"
           >
             👥 GESTIONE UTENTI
