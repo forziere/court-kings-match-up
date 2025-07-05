@@ -45,8 +45,6 @@ const FindOpponentsModal = ({ isOpen, onClose, user, refreshKey }: FindOpponents
       // Se il refreshKey è cambiato o è la prima volta che si apre
       if (refreshKey !== lastRefreshKey) {
         console.log('🔍 FindOpponentsModal: Loading opponents with refreshKey:', refreshKey, '(was:', lastRefreshKey, ')');
-        // Svuota la lista prima del reload per forzare refresh
-        setOpponents([]);
         findOpponents();
         setLastRefreshKey(refreshKey || 0);
       }
