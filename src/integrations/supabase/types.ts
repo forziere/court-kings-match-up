@@ -589,11 +589,15 @@ export type Database = {
           level: number | null
           losses: number | null
           points: number | null
+          preferred_hand: string | null
+          preferred_match_type: string | null
+          preferred_position: string | null
           preferred_times: string[] | null
           profile_photo_url: string | null
           skill_level: string | null
           skill_validated_by: string | null
           updated_at: string | null
+          user_emoji: string | null
           user_id: string
           wins: number | null
         }
@@ -611,11 +615,15 @@ export type Database = {
           level?: number | null
           losses?: number | null
           points?: number | null
+          preferred_hand?: string | null
+          preferred_match_type?: string | null
+          preferred_position?: string | null
           preferred_times?: string[] | null
           profile_photo_url?: string | null
           skill_level?: string | null
           skill_validated_by?: string | null
           updated_at?: string | null
+          user_emoji?: string | null
           user_id: string
           wins?: number | null
         }
@@ -633,11 +641,15 @@ export type Database = {
           level?: number | null
           losses?: number | null
           points?: number | null
+          preferred_hand?: string | null
+          preferred_match_type?: string | null
+          preferred_position?: string | null
           preferred_times?: string[] | null
           profile_photo_url?: string | null
           skill_level?: string | null
           skill_validated_by?: string | null
           updated_at?: string | null
+          user_emoji?: string | null
           user_id?: string
           wins?: number | null
         }

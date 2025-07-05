@@ -1,16 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { User, Trophy, TrendingUp, Users, BookOpen } from "lucide-react";
+import { User, Camera, Edit3, Clock, MapPin, Trophy, Users2, Bell, Hand, Gamepad2 } from "lucide-react";
 
 interface UserSettingsProps {
   isOpen: boolean;
@@ -19,33 +18,38 @@ interface UserSettingsProps {
 }
 
 const UserSettings = ({ isOpen, onClose, user }: UserSettingsProps) => {
-  const [formData, setFormData] = useState({
+  const [isEditing, setIsEditing] = useState(false);
+  const [profileData, setProfileData] = useState({
     name: user?.name || '',
+    userEmoji: '😊',
+    profilePhotoUrl: '',
+    preferredHand: 'Destro',
+    preferredPosition: 'Destra', 
+    preferredMatchType: 'Amichevole',
+    preferredTime: 'Sera',
     sport: user?.sport || '',
     level: user?.level || '',
-    city: user?.city || 'lucca',
-    preferred_position: '',
-    frequent_partners: '',
-    elo_rating: 1000,
-    games_played: 0,
-    wins: 0,
-    losses: 0
+    city: user?.city || ''
   });
+  
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [gameplayTips, setGameplayTips] = useState({
-    padel: '',
-    tennis: '',
-    calcio: ''
-  });
+  // Emoji divertenti per la selezione
+  const funEmojis = [
+    '😊', '😎', '🤩', '😋', '🤗', '😄', '🥳', '😸', '🤖', '🦸',
+    '🎯', '🏆', '⚡', '🔥', '💪', '🎮', '🎵', '🌟', '🚀', '💎',
+    '🦄', '🌈', '⭐', '🎪', '🎭', '🎨', '🎸', '🎤', '🎲', '🎊'
+  ];
 
   useEffect(() => {
     if (user) {
-      loadUserStats();
-      loadGameplayTips();
+      loadUserData();
     }
   }, [user]);
 
-  const loadUserStats = async () => {
+  const loadUserData = async () => {
     try {
       const { data, error } = await supabase
         .from('user_stats')
@@ -54,43 +58,58 @@ const UserSettings = ({ isOpen, onClose, user }: UserSettingsProps) => {
         .single();
 
       if (data) {
-        setFormData(prev => ({
+        setProfileData(prev => ({
           ...prev,
-          elo_rating: data.elo_rating || 1000,
-          games_played: data.games_played || 0,
-          wins: data.wins || 0,
-          losses: data.losses || 0
+          userEmoji: data.user_emoji || '😊',
+          profilePhotoUrl: data.profile_photo_url || '',
+          preferredHand: data.preferred_hand || 'Destro',
+          preferredPosition: data.preferred_position || 'Destra',
+          preferredMatchType: data.preferred_match_type || 'Amichevole'
         }));
       }
     } catch (error) {
-      console.error('Error loading user stats:', error);
+      console.error('Error loading user data:', error);
     }
   };
 
-  const loadGameplayTips = () => {
-    const tips = {
-      padel: `🎾 CONSIGLI PADEL:
-• Posizione in campo: Mantieni sempre la posizione parallela al tuo compagno
-• Servizio: Serve sempre sottobraccio, fai rimbalzare la palla prima di colpirla
-• Strategia: Gioca verso il centro per creare aperture laterali
-• Muri: Usa le pareti per angoli difficili, ma attento al rimbalzo
-• Comunicazione: Parla sempre con il partner per coordinare i movimenti`,
-      
-      tennis: `🎾 CONSIGLI TENNIS:
-• Postura: Piedi alla larghezza delle spalle, peso sui piedi
-• Dritto: Ruota le spalle, segui il movimento completo
-• Rovescio: Usa entrambe le mani per più controllo e potenza
-• Servizio: Lancia la palla alta e colpisci nel punto più alto
-• Posizionamento: Torna sempre al centro dopo ogni colpo`,
-      
-      calcio: `⚽ CONSIGLI CALCIO:
-• Controllo palla: Prima tocca con la parte interna del piede
-• Passaggio: Mira sempre al piede del compagno più vicino
-• Tiro: Usa l'interno del piede per precisione, collo per potenza
-• Difesa: Mantieni sempre la posizione tra l'avversario e la porta
-• Condizione fisica: Corsa continua, cambi di ritmo sono fondamentali`
-    };
-    setGameplayTips(tips);
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      setUploading(true);
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Il file deve essere inferiore a 5MB');
+        return;
+      }
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${Math.random()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      setProfileData(prev => ({
+        ...prev,
+        profilePhotoUrl: data.publicUrl
+      }));
+
+      toast.success('Foto caricata con successo!');
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      toast.error('Errore nel caricamento della foto');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSave = async () => {
@@ -99,270 +118,285 @@ const UserSettings = ({ isOpen, onClose, user }: UserSettingsProps) => {
       const { error: profileError } = await supabase
         .from('profiles')
         .update({
-          name: formData.name,
-          sport: formData.sport,
-          level: formData.level,
-          city: formData.city
+          name: profileData.name,
+          sport: profileData.sport,
+          level: profileData.level,
+          city: profileData.city
         })
         .eq('id', user.id);
 
       if (profileError) throw profileError;
 
-      // Aggiorna o crea user_stats
+      // Aggiorna user_stats
       const { error: statsError } = await supabase
         .from('user_stats')
         .upsert({
           user_id: user.id,
-          elo_rating: formData.elo_rating,
-          games_played: formData.games_played,
-          wins: formData.wins,
-          losses: formData.losses,
-          preferred_times: formData.frequent_partners ? [formData.frequent_partners] : []
+          user_emoji: profileData.userEmoji,
+          profile_photo_url: profileData.profilePhotoUrl,
+          preferred_hand: profileData.preferredHand,
+          preferred_position: profileData.preferredPosition,
+          preferred_match_type: profileData.preferredMatchType
         });
 
       if (statsError) throw statsError;
 
-      toast.success("Impostazioni salvate con successo!");
-      onClose();
+      toast.success("Profilo aggiornato con successo!");
+      setIsEditing(false);
     } catch (error) {
-      console.error('Error saving settings:', error);
-      toast.error("Errore nel salvataggio delle impostazioni");
+      console.error('Error saving profile:', error);
+      toast.error("Errore nel salvataggio del profilo");
     }
-  };
-
-  const updateEloRating = (isWin: boolean) => {
-    const change = isWin ? 0.1 : -0.2;
-    setFormData(prev => ({
-      ...prev,
-      elo_rating: Math.max(0, prev.elo_rating + change),
-      games_played: prev.games_played + 1,
-      wins: isWin ? prev.wins + 1 : prev.wins,
-      losses: isWin ? prev.losses : prev.losses + 1
-    }));
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800">
-        <DialogHeader>
-          <DialogTitle className="text-white text-2xl flex items-center gap-2">
-            <User className="w-6 h-6" />
-            Impostazioni Profilo
-          </DialogTitle>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-slate-900 border-slate-700">
+        {/* Header */}
+        <DialogHeader className="flex flex-row items-center justify-between pb-4 border-b border-slate-700">
+          <DialogTitle className="text-white text-xl font-bold">Profilo</DialogTitle>
+          <div className="flex items-center gap-2">
+            <Bell className="w-5 h-5 text-slate-400" />
+            <Button
+              onClick={() => setIsEditing(!isEditing)}
+              variant="ghost"
+              size="sm"
+              className="text-blue-400 hover:text-blue-300"
+            >
+              {isEditing ? 'Annulla' : 'Modifica'}
+            </Button>
+          </div>
         </DialogHeader>
 
-        <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-white/10">
-            <TabsTrigger value="profile" className="text-white">👤 Profilo</TabsTrigger>
-            <TabsTrigger value="stats" className="text-white">📊 Statistiche</TabsTrigger>
-            <TabsTrigger value="tips" className="text-white">💡 Consigli</TabsTrigger>
-            <TabsTrigger value="social" className="text-white">👥 Social</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="profile" className="space-y-6">
-            <Card className="glass-card border-white/30">
-              <CardHeader>
-                <CardTitle className="text-white">Informazioni Personali</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-white">Nome</Label>
-                    <Input
-                      value={formData.name}
-                      onChange={(e) => setFormData(prev => ({...prev, name: e.target.value}))}
-                      className="bg-white/10 border-white/30 text-white"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-white">Città</Label>
-                    <Input
-                      value={formData.city}
-                      onChange={(e) => setFormData(prev => ({...prev, city: e.target.value}))}
-                      className="bg-white/10 border-white/30 text-white"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-white">Sport Principale</Label>
-                    <Select onValueChange={(value) => setFormData(prev => ({...prev, sport: value}))}>
-                      <SelectTrigger className="bg-white/10 border-white/30 text-white">
-                        <SelectValue placeholder={formData.sport || "Seleziona sport"} />
-                      </SelectTrigger>
-                      <SelectContent className="bg-gray-800 border-gray-600">
-                        <SelectItem value="padel">🎾 Padel</SelectItem>
-                        <SelectItem value="tennis">🎾 Tennis</SelectItem>
-                        <SelectItem value="calcio">⚽ Calcio</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label className="text-white">Livello</Label>
-                    <Select onValueChange={(value) => setFormData(prev => ({...prev, level: value}))}>
-                      <SelectTrigger className="bg-white/10 border-white/30 text-white">
-                        <SelectValue placeholder={formData.level || "Seleziona livello"} />
-                      </SelectTrigger>
-                      <SelectContent className="bg-gray-800 border-gray-600">
-                        <SelectItem value="principiante">🟢 Principiante</SelectItem>
-                        <SelectItem value="intermedio">🟡 Intermedio</SelectItem>
-                        <SelectItem value="avanzato">🟠 Avanzato</SelectItem>
-                        <SelectItem value="esperto">🔴 Esperto</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {(formData.sport === 'padel' || formData.sport === 'tennis') && (
-                  <div>
-                    <Label className="text-white">Posizione Preferita</Label>
-                    <Select onValueChange={(value) => setFormData(prev => ({...prev, preferred_position: value}))}>
-                      <SelectTrigger className="bg-white/10 border-white/30 text-white">
-                        <SelectValue placeholder="Seleziona posizione" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-gray-800 border-gray-600">
-                        <SelectItem value="destra">↗️ Destra</SelectItem>
-                        <SelectItem value="sinistra">↖️ Sinistra</SelectItem>
-                        <SelectItem value="entrambe">↔️ Entrambe</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-                <div>
-                  <Label className="text-white">Partner di Gioco Frequenti</Label>
-                  <Textarea
-                    placeholder="Inserisci i nomi dei tuoi partner di gioco abituali..."
-                    value={formData.frequent_partners}
-                    onChange={(e) => setFormData(prev => ({...prev, frequent_partners: e.target.value}))}
-                    className="bg-white/10 border-white/30 text-white placeholder:text-blue-200"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="stats" className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <Card className="glass-card border-white/30">
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <Trophy className="w-5 h-5" />
-                    Rating ELO
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-yellow-400 mb-2">
-                    {formData.elo_rating.toFixed(1)}
-                  </div>
-                  <div className="flex gap-2">
-                    <Button 
-                      onClick={() => updateEloRating(true)}
-                      className="bg-green-600 hover:bg-green-700 text-white"
-                      size="sm"
-                    >
-                      ✅ Vittoria (+0.1)
-                    </Button>
-                    <Button 
-                      onClick={() => updateEloRating(false)}
-                      className="bg-red-600 hover:bg-red-700 text-white"
-                      size="sm"
-                    >
-                      ❌ Sconfitta (-0.2)
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="glass-card border-white/30">
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5" />
-                    Statistiche
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className="flex justify-between text-white">
-                    <span>Partite Giocate:</span>
-                    <Badge variant="secondary">{formData.games_played}</Badge>
-                  </div>
-                  <div className="flex justify-between text-white">
-                    <span>Vittorie:</span>
-                    <Badge className="bg-green-600">{formData.wins}</Badge>
-                  </div>
-                  <div className="flex justify-between text-white">
-                    <span>Sconfitte:</span>
-                    <Badge className="bg-red-600">{formData.losses}</Badge>
-                  </div>
-                  <div className="flex justify-between text-white">
-                    <span>Win Rate:</span>
-                    <Badge variant="outline" className="text-white border-white">
-                      {formData.games_played > 0 ? ((formData.wins / formData.games_played) * 100).toFixed(1) : 0}%
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
+        <div className="space-y-6 py-4">
+          {/* Photo + Name Section */}
+          <div className="flex items-center gap-4 p-4 bg-slate-800 rounded-xl">
+            <div className="relative">
+              <Avatar className="w-16 h-16">
+                <AvatarImage src={profileData.profilePhotoUrl} />
+                <AvatarFallback className="text-2xl bg-slate-700">
+                  {profileData.userEmoji}
+                </AvatarFallback>
+              </Avatar>
+              {isEditing && (
+                <Button
+                  onClick={() => fileInputRef.current?.click()}
+                  size="sm"
+                  className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-blue-600 hover:bg-blue-700"
+                  disabled={uploading}
+                >
+                  <Camera className="w-4 h-4" />
+                </Button>
+              )}
             </div>
-          </TabsContent>
-
-          <TabsContent value="tips" className="space-y-4">
-            {Object.entries(gameplayTips).map(([sport, tips]) => (
-              <Card key={sport} className="glass-card border-white/30">
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <BookOpen className="w-5 h-5" />
-                    Consigli per {sport.charAt(0).toUpperCase() + sport.slice(1)}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <pre className="text-blue-200 whitespace-pre-wrap text-sm font-mono">
-                    {tips}
-                  </pre>
-                </CardContent>
-              </Card>
-            ))}
-          </TabsContent>
-
-          <TabsContent value="social" className="space-y-4">
-            <Card className="glass-card border-white/30">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  Chat & Comunicazione
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-blue-200 mb-4">
-                  Connettiti con altri giocatori della community Sport Connect!
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white">
-                    💬 Chat Community
+            
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                {isEditing ? (
+                  <Input
+                    value={profileData.name}
+                    onChange={(e) => setProfileData(prev => ({...prev, name: e.target.value}))}
+                    className="bg-slate-700 border-slate-600 text-white"
+                  />
+                ) : (
+                  <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                    <span>{profileData.userEmoji}</span>
+                    {profileData.name}
+                  </h2>
+                )}
+                {isEditing && (
+                  <Button
+                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    variant="outline"
+                    size="sm"
+                    className="border-slate-600 text-slate-300"
+                  >
+                    {profileData.userEmoji}
                   </Button>
-                  <Button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white">
-                    📱 WhatsApp Group
-                  </Button>
+                )}
+              </div>
+              
+              {/* Emoji Picker */}
+              {showEmojiPicker && (
+                <div className="mt-2 p-3 bg-slate-700 rounded-lg grid grid-cols-6 gap-2 max-h-32 overflow-y-auto">
+                  {funEmojis.map((emoji) => (
+                    <Button
+                      key={emoji}
+                      onClick={() => {
+                        setProfileData(prev => ({...prev, userEmoji: emoji}));
+                        setShowEmojiPicker(false);
+                      }}
+                      variant="ghost"
+                      size="sm"
+                      className="w-8 h-8 text-lg hover:bg-slate-600"
+                    >
+                      {emoji}
+                    </Button>
+                  ))}
                 </div>
-                
-                <div className="text-sm text-blue-300 bg-white/5 p-3 rounded-lg">
-                  <strong>📧 Email:</strong> filippomori69@gmail.com<br/>
-                  <strong>📱 WhatsApp:</strong> Clicca il bottone sopra per unirti al gruppo
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+              )}
+            </div>
+          </div>
 
-        <div className="flex justify-end gap-2 pt-4 border-t border-white/20">
-          <Button onClick={onClose} variant="outline" className="border-white/30 text-white hover:bg-white/10">
-            Annulla
-          </Button>
-          <Button onClick={handleSave} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-            💾 Salva Impostazioni
-          </Button>
+          {/* Preferenze del giocatore */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-4">Preferenze del giocatore</h3>
+            
+            <div className="space-y-4">
+              {/* Mano preferita */}
+              <div className="flex items-center justify-between p-4 bg-slate-800 rounded-xl">
+                <div className="flex items-center gap-3">
+                  <Hand className="w-6 h-6 text-yellow-400" />
+                  <div>
+                    <p className="text-white font-medium">Mano preferita</p>
+                    <p className="text-slate-400 text-sm">
+                      {isEditing ? (
+                        <Select onValueChange={(value) => setProfileData(prev => ({...prev, preferredHand: value}))}>
+                          <SelectTrigger className="w-32 bg-slate-700 border-slate-600 text-white">
+                            <SelectValue placeholder={profileData.preferredHand} />
+                          </SelectTrigger>
+                          <SelectContent className="bg-slate-800 border-slate-600">
+                            <SelectItem value="Destro">Destro</SelectItem>
+                            <SelectItem value="Sinistro">Sinistro</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        profileData.preferredHand
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Posizione in campo */}
+              <div className="flex items-center justify-between p-4 bg-slate-800 rounded-xl">
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-6 h-6 text-red-400" />
+                  <div>
+                    <p className="text-white font-medium">Posizione in campo</p>
+                    <p className="text-slate-400 text-sm">
+                      {isEditing ? (
+                        <Select onValueChange={(value) => setProfileData(prev => ({...prev, preferredPosition: value}))}>
+                          <SelectTrigger className="w-32 bg-slate-700 border-slate-600 text-white">
+                            <SelectValue placeholder={profileData.preferredPosition} />
+                          </SelectTrigger>
+                          <SelectContent className="bg-slate-800 border-slate-600">
+                            <SelectItem value="Destra">Destra</SelectItem>
+                            <SelectItem value="Sinistra">Sinistra</SelectItem>
+                            <SelectItem value="Centro">Centro</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        profileData.preferredPosition
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tipo di partita */}
+              <div className="flex items-center justify-between p-4 bg-slate-800 rounded-xl">
+                <div className="flex items-center gap-3">
+                  <Trophy className="w-6 h-6 text-purple-400" />
+                  <div>
+                    <p className="text-white font-medium">Tipo di partita</p>
+                    <p className="text-slate-400 text-sm">
+                      {isEditing ? (
+                        <Select onValueChange={(value) => setProfileData(prev => ({...prev, preferredMatchType: value}))}>
+                          <SelectTrigger className="w-40 bg-slate-700 border-slate-600 text-white">
+                            <SelectValue placeholder={profileData.preferredMatchType} />
+                          </SelectTrigger>
+                          <SelectContent className="bg-slate-800 border-slate-600">
+                            <SelectItem value="Amichevole">Amichevole</SelectItem>
+                            <SelectItem value="Competitiva">Competitiva</SelectItem>
+                            <SelectItem value="Entrambe">Entrambe</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        profileData.preferredMatchType
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Orario di gioco preferito */}
+              <div className="flex items-center justify-between p-4 bg-slate-800 rounded-xl">
+                <div className="flex items-center gap-3">
+                  <Clock className="w-6 h-6 text-orange-400" />
+                  <div>
+                    <p className="text-white font-medium">Orario di gioco preferito</p>
+                    <p className="text-slate-400 text-sm">
+                      {isEditing ? (
+                        <Select onValueChange={(value) => setProfileData(prev => ({...prev, preferredTime: value}))}>
+                          <SelectTrigger className="w-32 bg-slate-700 border-slate-600 text-white">
+                            <SelectValue placeholder={profileData.preferredTime} />
+                          </SelectTrigger>
+                          <SelectContent className="bg-slate-800 border-slate-600">
+                            <SelectItem value="Mattina">Mattina</SelectItem>
+                            <SelectItem value="Pomeriggio">Pomeriggio</SelectItem>
+                            <SelectItem value="Sera">Sera</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <span className="flex items-center gap-1">
+                          🌅 {profileData.preferredTime}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+                {!isEditing && (
+                  <Button variant="ghost" size="sm" className="text-slate-400">
+                    <Edit3 className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Persone con cui gioca di più */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-4">Persone con cui gioca di più</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-slate-800 rounded-xl p-4 text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mb-2 flex items-center justify-center">
+                  <Users2 className="w-6 h-6 text-white" />
+                </div>
+                <p className="text-white text-sm">Partner frequenti</p>
+                <p className="text-slate-400 text-xs">Aggiungi amici</p>
+              </div>
+              <div className="bg-slate-800 rounded-xl p-4 text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mx-auto mb-2 flex items-center justify-center">
+                  <Gamepad2 className="w-6 h-6 text-white" />
+                </div>
+                <p className="text-white text-sm">Team</p>
+                <p className="text-slate-400 text-xs">Crea squadra</p>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {/* Save Button */}
+        {isEditing && (
+          <div className="flex justify-end gap-2 pt-4 border-t border-slate-700">
+            <Button
+              onClick={handleSave}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              Salva modifiche
+            </Button>
+          </div>
+        )}
+
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handlePhotoUpload}
+          className="hidden"
+        />
       </DialogContent>
     </Dialog>
   );
