@@ -256,7 +256,11 @@ const AdminDashboard = ({ user, onBack, onShowUserManagement }) => {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <Button 
-            onClick={onShowUserManagement}
+            onClick={() => {
+              console.log('🎯 AdminDashboard: Cliccato GESTIONE UTENTI');
+              onShowUserManagement();
+              console.log('🎯 AdminDashboard: onShowUserManagement() chiamato');
+            }}
             className="bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white font-bold h-16 rounded-xl text-sm uppercase tracking-wider"
           >
             👥 GESTIONE UTENTI
