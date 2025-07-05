@@ -220,11 +220,14 @@ const DashboardView = ({ user, onLogout }) => {
   console.log('🎯 DashboardView render - showUserManagement:', showUserManagement, 'userRole:', userRole, 'activeTab:', activeTab);
 
   if (showUserManagement) {
-    console.log('🎯 Showing UserManagement component');
-    return <UserManagement onBack={() => {
-      console.log('🎯 UserManagement onBack called');
-      setShowUserManagement(false);
-    }} />;
+    console.log('🎯 Showing UserManagement component with refreshKey:', refreshKey);
+    return <UserManagement 
+      onBack={() => {
+        console.log('🎯 UserManagement onBack called');
+        setShowUserManagement(false);
+      }} 
+      refreshKey={refreshKey}
+    />;
   }
 
   if (activeTab === "admin" && userRole === "admin") {
@@ -695,14 +698,6 @@ const DashboardView = ({ user, onLogout }) => {
         user={user}
         refreshKey={refreshKey}
       />
-
-      {/* User Management Modal */}
-      {showUserManagement && (
-        <UserManagement 
-          onBack={() => setShowUserManagement(false)}
-          refreshKey={refreshKey}
-        />
-      )}
     </div>
   );
 };
