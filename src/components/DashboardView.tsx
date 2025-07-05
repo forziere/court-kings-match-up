@@ -38,6 +38,9 @@ const DashboardView = ({ user, onLogout }) => {
   const [showFindOpponents, setShowFindOpponents] = useState(false);
   const [showUserManagement, setShowUserManagement] = useState(false);
 
+  // Stato stabile per il ruolo - una volta caricato non si resetta
+  const [roleLoaded, setRoleLoaded] = useState(false);
+
   // Debug state
   useEffect(() => {
     console.log('🔍 showUserManagement state changed:', showUserManagement);
@@ -48,11 +51,21 @@ const DashboardView = ({ user, onLogout }) => {
   }, [activeTab]);
 
   useEffect(() => {
-    checkUserRole();
-  }, [user]);
+    // Carica i ruoli solo una volta all'inizio
+    if (!roleLoaded) {
+      checkUserRole();
+    }
+  }, [user, roleLoaded]);
 
   const checkUserRole = async () => {
-    console.log("🔍 Checking user role for:", user);
+    console.log("🔍 Checking user role for:", user, "roleLoaded:", roleLoaded);
+    
+    // Se il ruolo è già stato caricato, non ricaricare
+    if (roleLoaded) {
+      console.log("✅ Role already loaded, skipping check");
+      return;
+    }
+    
     setIsLoadingRole(true);
     
     try {
@@ -67,6 +80,7 @@ const DashboardView = ({ user, onLogout }) => {
         console.error('❌ Error fetching user roles:', error);
         console.log('❌ RESETTING userRole to "user" due to error');
         setUserRole('user');
+        setRoleLoaded(true); // Impedisci ulteriori tentativi
         setIsLoadingRole(false);
         return;
       }
@@ -77,13 +91,13 @@ const DashboardView = ({ user, onLogout }) => {
         console.log('🎭 Found roles:', roles);
         
         if (roles.includes('admin')) {
-          console.log('👑 Setting user as ADMIN');
+          console.log('👑 Setting user as ADMIN - DEFINITIVO');
           setUserRole('admin');
         } else if (roles.includes('moderator')) {
-          console.log('🏢 Setting user as MODERATOR');  
+          console.log('🏢 Setting user as MODERATOR - DEFINITIVO');  
           setUserRole('moderator');
         } else {
-          console.log('👤 Setting user as USER');
+          console.log('👤 Setting user as USER - DEFINITIVO');
           setUserRole('user');
         }
       } else {
@@ -91,10 +105,15 @@ const DashboardView = ({ user, onLogout }) => {
         console.log('❌ RESETTING userRole to "user" due to no roles');
         setUserRole('user');
       }
+      
+      // Marca il ruolo come caricato definitivamente
+      setRoleLoaded(true);
+      
     } catch (error) {
       console.error('💥 Error checking user role:', error);
       console.log('❌ RESETTING userRole to "user" due to catch error');
       setUserRole('user');
+      setRoleLoaded(true); // Impedisci ulteriori tentativi
     } finally {
       setIsLoadingRole(false);
     }
