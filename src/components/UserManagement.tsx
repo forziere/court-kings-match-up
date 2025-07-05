@@ -43,15 +43,17 @@ const UserManagement = ({ onBack, refreshKey }: UserManagementProps) => {
   const [dataTimestamp, setDataTimestamp] = useState(Date.now());
 
   useEffect(() => {
+    console.log('📊 UserManagement: refreshKey changed to:', refreshKey);
     loadUsers();
-    // Aggiorna il timestamp ogni volta che refreshKey cambia
-    if (refreshKey > 0) {
+    // Forza un reload anche se refreshKey è 0
+    if (refreshKey >= 0) {
       setDataTimestamp(Date.now());
     }
-  }, [refreshKey, dataTimestamp]);
+  }, [refreshKey]);
 
   const loadUsers = async () => {
-    console.log('🔍 UserManagement: Iniziando caricamento utenti...');
+    console.log('🔍 UserManagement: Iniziando caricamento utenti... (refreshKey:', refreshKey, ')');
+    setLoading(true); // Aggiungi loading state
     
     // Verifica autenticazione
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();

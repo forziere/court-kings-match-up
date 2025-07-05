@@ -43,14 +43,23 @@ const DashboardView = ({ user, onLogout }) => {
   // Stato stabile per il ruolo - una volta caricato non si resetta
   const [roleLoaded, setRoleLoaded] = useState(false);
 
-  // Funzione per aggiornare i dati dopo modifica profilo
+  // Funzione per aggiornare i dati dopo modifica profilo con doppio refresh
   const handleProfileUpdate = () => {
-    // Incrementa refreshKey e forza un nuovo timestamp
+    console.log('🔄 Triggering profile update refresh...');
+    // Incrementa refreshKey più volte per forzare il refresh
     setRefreshKey(prev => prev + 1);
-    // Aggiunge un piccolo delay per assicurarsi che i dati siano stati salvati
+    
+    // Forza un secondo refresh dopo un delay
     setTimeout(() => {
-      setRefreshKey(prev => prev + 1);
-    }, 2000);
+      console.log('🔄 Second refresh trigger...');
+      setRefreshKey(prev => prev + 10);
+    }, 100);
+    
+    // Terzo refresh per essere sicuri
+    setTimeout(() => {
+      console.log('🔄 Third refresh trigger...');  
+      setRefreshKey(prev => prev + 100);
+    }, 1000);
   };
 
   // Debug state
