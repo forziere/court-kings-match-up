@@ -43,16 +43,37 @@ const UserManagement = ({ onBack }: UserManagementProps) => {
   }, []);
 
   const loadUsers = async () => {
+    console.log('🔍 UserManagement: Iniziando caricamento utenti...');
+    
+    // Verifica autenticazione
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    console.log('🔐 UserManagement: Session check:', { session: !!session, sessionError });
+    
+    if (sessionError || !session) {
+      console.error('❌ UserManagement: Session error:', sessionError);
+      toast.error("Errore di autenticazione");
+      return;
+    }
+    
     try {
       // Prima query per ottenere tutti gli utenti
+      console.log('📋 UserManagement: Eseguendo query utenti...');
       const { data: usersData, error: usersError } = await supabase
         .from('users')
         .select('id, name, email, sport, level, city, created_at')
         .order('name');
 
+      console.log('📊 UserManagement: Risultato query utenti:', { usersData, usersError, count: usersData?.length });
+
       if (usersError) {
-        console.error('Error loading users:', usersError);
-        toast.error("Errore nel caricamento utenti");
+        console.error('❌ UserManagement: Error loading users:', usersError);
+        toast.error("Errore nel caricamento utenti: " + usersError.message);
+        return;
+      }
+
+      if (!usersData || usersData.length === 0) {
+        console.log('⚠️ UserManagement: Nessun utente trovato');
+        setUsers([]);
         return;
       }
 
