@@ -131,21 +131,42 @@ const UserSettings = ({ isOpen, onClose, user }: UserSettingsProps) => {
 
       if (profileError) throw profileError;
 
-      // Aggiorna user_stats con chiave specifica per evitare duplicati
-      const { error: statsError } = await supabase
+      // Controlla se esiste già user_stats
+      const { data: existingStats } = await supabase
         .from('user_stats')
-        .upsert({
-          user_id: user.id,
-          user_emoji: profileData.userEmoji,
-          profile_photo_url: profileData.profilePhotoUrl,
-          preferred_hand: profileData.preferredHand,
-          preferred_position: profileData.preferredPosition,
-          preferred_match_type: profileData.preferredMatchType
-        }, {
-          onConflict: 'user_id'
-        });
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
 
-      if (statsError) throw statsError;
+      if (existingStats) {
+        // Aggiorna record esistente
+        const { error: updateError } = await supabase
+          .from('user_stats')
+          .update({
+            user_emoji: profileData.userEmoji,
+            profile_photo_url: profileData.profilePhotoUrl,
+            preferred_hand: profileData.preferredHand,
+            preferred_position: profileData.preferredPosition,
+            preferred_match_type: profileData.preferredMatchType
+          })
+          .eq('user_id', user.id);
+
+        if (updateError) throw updateError;
+      } else {
+        // Crea nuovo record
+        const { error: insertError } = await supabase
+          .from('user_stats')
+          .insert({
+            user_id: user.id,
+            user_emoji: profileData.userEmoji,
+            profile_photo_url: profileData.profilePhotoUrl,
+            preferred_hand: profileData.preferredHand,
+            preferred_position: profileData.preferredPosition,
+            preferred_match_type: profileData.preferredMatchType
+          });
+
+        if (insertError) throw insertError;
+      }
 
       toast.success("Profilo aggiornato con successo!");
       setIsEditing(false);
