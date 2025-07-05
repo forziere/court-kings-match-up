@@ -175,6 +175,7 @@ const UserSettings = ({ isOpen, onClose, user, onProfileUpdate }: UserSettingsPr
       if (onProfileUpdate) {
         console.log('🔥 UserSettings: Calling onProfileUpdate callback');
         onProfileUpdate();
+        console.log('✅ UserSettings: IMPORTANTE - Per vedere l\'aggiornamento devi essere nella sezione "Gestione Utenti"');
       }
       
       // Rimuovo il reload automatico per testare solo il refresh
