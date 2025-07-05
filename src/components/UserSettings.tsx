@@ -177,7 +177,7 @@ const UserSettings = ({ isOpen, onClose, user }: UserSettingsProps) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-slate-900 border-slate-700">
         {/* Header */}
         <DialogHeader className="flex flex-row items-center justify-between pb-4 border-b border-slate-700">
