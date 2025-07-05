@@ -43,16 +43,15 @@ const FindOpponentsModal = ({ isOpen, onClose, user, refreshKey }: FindOpponents
     
     if (isOpen && user) {
       // Se il refreshKey è cambiato o è la prima volta che si apre
-      if (refreshKey !== lastRefreshKey) {
+      if (refreshKey !== lastRefreshKey || lastRefreshKey === 0) {
         console.log('🔍 FindOpponentsModal: Loading opponents with refreshKey:', refreshKey, '(was:', lastRefreshKey, ')');
         findOpponents();
         setLastRefreshKey(refreshKey || 0);
+      } else {
+        console.log('🔍 FindOpponentsModal: No refresh needed, refreshKey unchanged');
       }
-    } else if (refreshKey && refreshKey !== lastRefreshKey) {
-      // Modal chiuso ma refreshKey cambiato - segna per refresh futuro
-      console.log('🔍 FindOpponentsModal: Modal closed but refreshKey changed, will refresh on next open');
-      setLastRefreshKey(refreshKey);
     }
+    // Non modifico lastRefreshKey quando il modal è chiuso
   }, [isOpen, user, refreshKey]);
 
   const findOpponents = async () => {
