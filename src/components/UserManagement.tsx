@@ -24,6 +24,7 @@ interface UserData {
     wins: number;
     losses: number;
     skill_level: string;
+    user_emoji: string;
   }[];
 }
 
@@ -82,7 +83,7 @@ const UserManagement = ({ onBack }: UserManagementProps) => {
         usersData?.map(async (user) => {
           const { data: stats } = await supabase
             .from('user_stats')
-            .select('elo_rating, games_played, wins, losses, skill_level')
+            .select('elo_rating, games_played, wins, losses, skill_level, user_emoji')
             .eq('user_id', user.id)
             .single();
           
@@ -93,7 +94,8 @@ const UserManagement = ({ onBack }: UserManagementProps) => {
               games_played: 0,
               wins: 0,
               losses: 0,
-              skill_level: 'principiante'
+              skill_level: 'principiante',
+              user_emoji: '😊'
             }]
           };
         }) || []
@@ -271,7 +273,8 @@ const UserManagement = ({ onBack }: UserManagementProps) => {
                     games_played: 0,
                     wins: 0,
                     losses: 0,
-                    skill_level: 'principiante'
+                    skill_level: 'principiante',
+                    user_emoji: '😊'
                   };
 
                   return (
@@ -279,8 +282,8 @@ const UserManagement = ({ onBack }: UserManagementProps) => {
                       <TableCell className="py-4">
                         <div className="flex items-center gap-3">
                           <Avatar className="w-10 h-10 bg-white/20">
-                            <AvatarFallback className="text-white font-bold">
-                              {user.name?.charAt(0)?.toUpperCase() || 'U'}
+                            <AvatarFallback className="text-white text-lg">
+                              {stats.user_emoji || user.name?.charAt(0)?.toUpperCase() || 'U'}
                             </AvatarFallback>
                           </Avatar>
                           <div>
