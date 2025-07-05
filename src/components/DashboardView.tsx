@@ -65,6 +65,7 @@ const DashboardView = ({ user, onLogout }) => {
       
       if (error) {
         console.error('❌ Error fetching user roles:', error);
+        console.log('❌ RESETTING userRole to "user" due to error');
         setUserRole('user');
         setIsLoadingRole(false);
         return;
@@ -87,10 +88,12 @@ const DashboardView = ({ user, onLogout }) => {
         }
       } else {
         console.log('❌ No roles found for user, setting default user role');
+        console.log('❌ RESETTING userRole to "user" due to no roles');
         setUserRole('user');
       }
     } catch (error) {
       console.error('💥 Error checking user role:', error);
+      console.log('❌ RESETTING userRole to "user" due to catch error');
       setUserRole('user');
     } finally {
       setIsLoadingRole(false);
