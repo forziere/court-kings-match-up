@@ -210,7 +210,10 @@ const Index = ({ user: propUser, isLoggedIn: propIsLoggedIn, onLogin, onLogout }
             transition={{ duration: 0.6, delay: 0.3 }}
             className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto"
           >
-            <div className="glass-card rounded-2xl overflow-hidden">
+            <div 
+              className="glass-card rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transition-all duration-300 hover:shadow-xl"
+              onClick={() => setShowLogin(true)}
+            >
               <img 
                 src="https://images.pexels.com/photos/209977/pexels-photo-209977.jpeg?auto=compress&cs=tinysrgb&w=800"
                 alt="Padel Players in Action"
@@ -221,7 +224,10 @@ const Index = ({ user: propUser, isLoggedIn: propIsLoggedIn, onLogin, onLogout }
                 <p className="text-blue-200 text-sm">Trova partner del tuo livello</p>
               </div>
             </div>
-            <div className="glass-card rounded-2xl overflow-hidden">
+            <div 
+              className="glass-card rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transition-all duration-300 hover:shadow-xl"
+              onClick={() => setShowBooking(true)}
+            >
               <img 
                 src="/lovable-uploads/eaf27e54-66aa-49f2-b23d-704145ba50ad.png"
                 alt="Campi Premium"
@@ -232,7 +238,10 @@ const Index = ({ user: propUser, isLoggedIn: propIsLoggedIn, onLogin, onLogout }
                 <p className="text-blue-200 text-sm">Prenota in tempo reale</p>
               </div>
             </div>
-            <div className="glass-card rounded-2xl overflow-hidden">
+            <div 
+              className="glass-card rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transition-all duration-300 hover:shadow-xl"
+              onClick={() => setShowLogin(true)}
+            >
               <img 
                 src="/lovable-uploads/2a481fa2-e10a-4312-a6dc-4726a89bb4d2.png"
                 alt="Winner with Trophy"
