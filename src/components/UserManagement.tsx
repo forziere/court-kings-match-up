@@ -30,9 +30,10 @@ interface UserData {
 
 interface UserManagementProps {
   onBack: () => void;
+  refreshKey?: number;
 }
 
-const UserManagement = ({ onBack }: UserManagementProps) => {
+const UserManagement = ({ onBack, refreshKey }: UserManagementProps) => {
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,7 +42,7 @@ const UserManagement = ({ onBack }: UserManagementProps) => {
 
   useEffect(() => {
     loadUsers();
-  }, []);
+  }, [refreshKey]);
 
   const loadUsers = async () => {
     console.log('🔍 UserManagement: Iniziando caricamento utenti...');

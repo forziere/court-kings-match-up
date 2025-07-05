@@ -27,9 +27,10 @@ interface FindOpponentsModalProps {
   isOpen: boolean;
   onClose: () => void;
   user: any;
+  refreshKey?: number;
 }
 
-const FindOpponentsModal = ({ isOpen, onClose, user }: FindOpponentsModalProps) => {
+const FindOpponentsModal = ({ isOpen, onClose, user, refreshKey }: FindOpponentsModalProps) => {
   const [opponents, setOpponents] = useState<Opponent[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -37,7 +38,7 @@ const FindOpponentsModal = ({ isOpen, onClose, user }: FindOpponentsModalProps) 
     if (isOpen && user) {
       findOpponents();
     }
-  }, [isOpen, user]);
+  }, [isOpen, user, refreshKey]);
 
   const findOpponents = async () => {
     setLoading(true);

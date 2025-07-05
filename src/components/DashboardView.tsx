@@ -37,9 +37,15 @@ const DashboardView = ({ user, onLogout }) => {
   const [showSettings, setShowSettings] = useState(false);
   const [showFindOpponents, setShowFindOpponents] = useState(false);
   const [showUserManagement, setShowUserManagement] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // Stato stabile per il ruolo - una volta caricato non si resetta
   const [roleLoaded, setRoleLoaded] = useState(false);
+
+  // Funzione per aggiornare i dati dopo modifica profilo
+  const handleProfileUpdate = () => {
+    setRefreshKey(prev => prev + 1);
+  };
 
   // Debug state
   useEffect(() => {
@@ -653,15 +659,25 @@ const DashboardView = ({ user, onLogout }) => {
       <UserSettings 
         isOpen={showSettings} 
         onClose={() => setShowSettings(false)} 
-        user={user} 
+        user={user}
+        onProfileUpdate={handleProfileUpdate}
       />
 
       {/* Find Opponents Modal */}
       <FindOpponentsModal 
         isOpen={showFindOpponents} 
         onClose={() => setShowFindOpponents(false)} 
-        user={user} 
+        user={user}
+        refreshKey={refreshKey}
       />
+
+      {/* User Management Modal */}
+      {showUserManagement && (
+        <UserManagement 
+          onBack={() => setShowUserManagement(false)}
+          refreshKey={refreshKey}
+        />
+      )}
     </div>
   );
 };

@@ -15,9 +15,10 @@ interface UserSettingsProps {
   isOpen: boolean;
   onClose: () => void;
   user: any;
+  onProfileUpdate?: () => void;
 }
 
-const UserSettings = ({ isOpen, onClose, user }: UserSettingsProps) => {
+const UserSettings = ({ isOpen, onClose, user, onProfileUpdate }: UserSettingsProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
@@ -170,6 +171,8 @@ const UserSettings = ({ isOpen, onClose, user }: UserSettingsProps) => {
 
       toast.success("Profilo aggiornato con successo!");
       setIsEditing(false);
+      // Notifica il componente padre per ricaricare i dati
+      onProfileUpdate?.();
     } catch (error) {
       console.error('Error saving profile:', error);
       toast.error("Errore nel salvataggio del profilo");
