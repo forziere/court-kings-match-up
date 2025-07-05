@@ -165,6 +165,14 @@ const UserSettings = ({ isOpen, onClose, user, onProfileUpdate }: UserSettingsPr
       if (existingStats) {
         // Aggiorna record esistente
         console.log('🔄 Updating existing stats...');
+        console.log('📝 Data to update:', {
+          user_emoji: profileData.userEmoji,
+          profile_photo_url: profileData.profilePhotoUrl,
+          preferred_hand: profileData.preferredHand,
+          preferred_position: profileData.preferredPosition,
+          preferred_match_type: profileData.preferredMatchType
+        });
+        
         const { error: updateError, data: updateData } = await supabase
           .from('user_stats')
           .update({
@@ -172,9 +180,10 @@ const UserSettings = ({ isOpen, onClose, user, onProfileUpdate }: UserSettingsPr
             profile_photo_url: profileData.profilePhotoUrl,
             preferred_hand: profileData.preferredHand,
             preferred_position: profileData.preferredPosition,
-            preferred_match_type: profileData.preferredMatchType
+            preferred_match_type: profileData.preferredMatchType,
+            updated_at: new Date().toISOString()
           })
-          .eq('user_id', user.id)
+          .eq('id', existingStats.id)  // Usa l'ID del record invece di user_id
           .select();
 
         console.log('📝 Update result:', { updateError, updateData });
