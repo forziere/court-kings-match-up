@@ -34,70 +34,98 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
           return;
         }
         
-        console.log("🚀 Iniziando registrazione con pagamento reale");
+        console.log("🚀 Iniziando registrazione gratuita");
         
-        // Chiama la Edge Function per creare il checkout Stripe
-        const { data, error } = await supabase.functions.invoke('create-checkout', {
-          body: {
-            userData: {
+        // Registrazione gratuita con Supabase Auth
+        const { data, error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            data: {
               name: formData.name,
-              email: formData.email,
               sport: formData.sport,
               level: formData.level,
               city: formData.city
-            }
+            },
+            emailRedirectTo: `${window.location.origin}/`
           }
         });
 
         if (error) {
-          console.error("❌ Errore chiamata Edge Function:", error);
-          toast.error("Errore durante la creazione del pagamento");
+          console.error("❌ Errore durante la registrazione:", error);
+          toast.error(error.message || "Errore durante la registrazione");
           return;
         }
 
-        if (data?.url) {
-          console.log("✅ URL checkout ricevuto, reindirizzamento...");
+        if (data.user) {
+          console.log("✅ Registrazione completata con successo");
+          toast.success("Registrazione completata! Controlla la tua email per confermare l'account.");
           
-          // Salva i dati temporaneamente per dopo il pagamento
-          sessionStorage.setItem('pending_registration', JSON.stringify({
-            ...formData,
-            sessionId: data.sessionId
-          }));
+          // Simula login immediato per demo (in produzione aspetteresti la conferma email)
+          const userData = {
+            id: data.user.id,
+            name: formData.name,
+            email: formData.email,
+            level: formData.level,
+            sport: formData.sport,
+            city: formData.city,
+            joinDate: new Date().toISOString().split('T')[0],
+            gamesPlayed: 0,
+            wins: 0,
+            rating: 1200
+          };
           
-          toast.success("Reindirizzamento al pagamento...");
-          
-          // Apri Stripe Checkout in una nuova scheda
-          window.open(data.url, '_blank');
-          
-        } else {
-          toast.error("Errore: URL di pagamento non ricevuto");
+          onLogin(userData);
         }
         
       } else {
-        // Login simulato (da implementare con Supabase Auth)
+        // Login con Supabase Auth
         if (!formData.email || !formData.password) {
           toast.error("Inserisci email e password");
           return;
         }
         
-        const userData = {
-          id: Date.now(),
-          name: "Utente Esistente",
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: formData.email,
-          level: "Intermedio",
-          sport: "Calcio",
-          city: "Milano",
-          joinDate: "2024-01-01",
-          gamesPlayed: 15,
-          wins: 9,
-          rating: 1250
-        };
-        
-        onLogin(userData);
+          password: formData.password,
+        });
+
+        if (error) {
+          console.error("❌ Errore durante il login:", error);
+          toast.error(error.message || "Errore durante il login");
+          return;
+        }
+
+        if (data.user) {
+          console.log("✅ Login completato con successo");
+          toast.success("Login completato con successo!");
+          
+          // Recupera il profilo utente
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', data.user.id)
+            .single();
+          
+          const userData = {
+            id: data.user.id,
+            name: profileData?.name || "Utente",
+            email: data.user.email,
+            level: profileData?.level || "Intermedio",
+            sport: profileData?.sport || "Calcio",
+            city: profileData?.city || "Milano",
+            joinDate: data.user.created_at?.split('T')[0] || "2024-01-01",
+            gamesPlayed: 0,
+            wins: 0,
+            rating: 1200
+          };
+          
+          onLogin(userData);
+        }
       }
     } catch (error) {
-      console.error("❌ Errore durante la registrazione:", error);
-      toast.error("Errore durante la registrazione");
+      console.error("❌ Errore:", error);
+      toast.error("Errore durante l'operazione");
     } finally {
       setIsLoading(false);
     }
@@ -143,7 +171,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                 </CardTitle>
                 <CardDescription className="text-blue-200">
                   {isRegistering 
-                    ? "Registrati per solo €1 e inizia subito a giocare!" 
+                    ? "Registrati gratuitamente e inizia subito a giocare!" 
                     : "Accedi al tuo account"
                   }
                 </CardDescription>
@@ -259,18 +287,6 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                   />
                 </div>
 
-                {isRegistering && (
-                  <div className="bg-gradient-to-r from-green-500/20 to-cyan-500/20 border border-green-400/30 rounded-lg p-4">
-                    <div className="flex items-center gap-3 text-green-200">
-                      <CreditCard className="w-5 h-5" />
-                      <div>
-                        <div className="font-semibold">Costo registrazione: €1.00</div>
-                        <div className="text-sm opacity-80">Pagamento sicuro con Stripe</div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 <Button 
                   type="submit"
                   disabled={isLoading}
@@ -279,11 +295,11 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                   {isLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      {isRegistering ? "Preparando pagamento..." : "Accedendo..."}
+                      {isRegistering ? "Registrando..." : "Accedendo..."}
                     </>
                   ) : (
                     <>
-                      {isRegistering ? "🚀 Registrati e Paga €1.00" : "🎯 Accedi"}
+                      {isRegistering ? "🚀 Registrati Gratis" : "🎯 Accedi"}
                     </>
                   )}
                 </Button>
