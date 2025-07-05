@@ -183,6 +183,11 @@ const DashboardView = ({ user, onLogout }) => {
     return <GestoreDashboard user={user} onBack={() => setActiveTab("dashboard")} />;
   }
 
+  if (activeTab === "gestore") {
+    console.log('❌ activeTab is gestore BUT userRole check failed. userRole:', userRole, 'isAdmin:', userRole === "admin", 'isModerator:', userRole === "moderator");
+    // Se arri qui, significa che il ruolo non è corretto
+  }
+
   if (activeTab === "booking") {
     return <BookingView user={user} onBack={() => setActiveTab("dashboard")} />;
   }
