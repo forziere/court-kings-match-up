@@ -14,7 +14,8 @@ import {
   Target,
   Gamepad2,
   Bell,
-  User
+  User,
+  MessageCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -389,8 +390,7 @@ const DashboardView = ({ user, onLogout }) => {
                   </Button>
                   <Button 
                     onClick={() => setShowFindOpponents(true)}
-                    variant="outline"
-                    className="border-white/30 text-white hover:bg-white/10"
+                    className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white border-0"
                   >
                     <Target className="w-4 h-4 mr-2" />
                     Trova avversari
@@ -620,7 +620,7 @@ const DashboardView = ({ user, onLogout }) => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div className="relative overflow-hidden rounded-xl">
                       <div 
                         className="absolute inset-0 bg-cover bg-center"
@@ -669,6 +669,23 @@ const DashboardView = ({ user, onLogout }) => {
                       >
                         <Trophy className="w-6 h-6" />
                         Tornei
+                      </Button>
+                    </div>
+
+                    <div className="relative overflow-hidden rounded-xl">
+                      <div 
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{
+                          backgroundImage: `url('https://images.unsplash.com/photo-1577563908411-5077b6dc7624?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80')`
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-cyan-600/80 to-cyan-400/60" />
+                      <Button 
+                        onClick={() => setActiveTab("chat")}
+                        className="relative z-10 w-full bg-transparent hover:bg-white/10 border-0 h-20 flex-col gap-2 text-white"
+                      >
+                        <MessageCircle className="w-6 h-6" />
+                        Chat
                       </Button>
                     </div>
                   </div>
