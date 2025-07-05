@@ -171,8 +171,8 @@ const UserSettings = ({ isOpen, onClose, user, onProfileUpdate }: UserSettingsPr
 
       toast.success("Profilo aggiornato con successo!");
       setIsEditing(false);
-      // Notifica il componente padre per ricaricare i dati
-      onProfileUpdate?.();
+              // Forza un reload completo dei dati aggiornando lo stato
+              window.location.reload();
     } catch (error) {
       console.error('Error saving profile:', error);
       toast.error("Errore nel salvataggio del profilo");
@@ -186,6 +186,14 @@ const UserSettings = ({ isOpen, onClose, user, onProfileUpdate }: UserSettingsPr
         <DialogHeader className="flex flex-row items-center justify-between pb-4 border-b border-slate-700">
           <DialogTitle className="text-white text-xl font-bold">Profilo</DialogTitle>
           <div className="flex items-center gap-2">
+            <Button
+              onClick={onClose}
+              variant="ghost"
+              size="sm"
+              className="text-slate-400 hover:text-white"
+            >
+              ← Dashboard
+            </Button>
             <Bell className="w-5 h-5 text-slate-400" />
             <Button
               onClick={() => setIsEditing(!isEditing)}

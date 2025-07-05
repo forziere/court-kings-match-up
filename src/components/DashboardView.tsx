@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BookingView from "@/components/BookingView";
 import TournamentView from "@/components/TournamentView";
+import ChatView from "@/components/ChatView";
 import AdminDashboard from "@/components/AdminDashboard";
 import GestoreDashboard from "@/components/GestoreDashboard";
 import UserManagement from "@/components/UserManagement";
@@ -334,6 +335,12 @@ const DashboardView = ({ user, onLogout }) => {
               className="data-[state=active]:bg-white/20 data-[state=active]:text-white text-blue-200 rounded-lg"
             >
               Tornei
+            </TabsTrigger>
+            <TabsTrigger 
+              value="chat" 
+              className="data-[state=active]:bg-white/20 data-[state=active]:text-white text-blue-200 rounded-lg"
+            >
+              💬 Chat
             </TabsTrigger>
           </TabsList>
 
@@ -651,6 +658,10 @@ const DashboardView = ({ user, onLogout }) => {
                 </CardContent>
               </Card>
             </motion.div>
+          </TabsContent>
+
+          <TabsContent value="chat" className="space-y-6">
+            <ChatView user={user} onBack={() => setActiveTab("dashboard")} />
           </TabsContent>
         </Tabs>
       </div>
