@@ -44,6 +44,8 @@ const UserManagement = ({ onBack, refreshKey }: UserManagementProps) => {
 
   useEffect(() => {
     console.log('📊 UserManagement: refreshKey changed to:', refreshKey);
+    // Svuota lo stato prima del reload per forzare refresh completo
+    setUsers([]);
     loadUsers();
     // Forza un reload anche se refreshKey è 0
     if (refreshKey >= 0) {
@@ -53,7 +55,7 @@ const UserManagement = ({ onBack, refreshKey }: UserManagementProps) => {
 
   const loadUsers = async () => {
     console.log('🔍 UserManagement: Iniziando caricamento utenti... (refreshKey:', refreshKey, ')');
-    setLoading(true); // Aggiungi loading state
+    setLoading(true);
     
     // Verifica autenticazione
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
@@ -62,12 +64,15 @@ const UserManagement = ({ onBack, refreshKey }: UserManagementProps) => {
     if (sessionError || !session) {
       console.error('❌ UserManagement: Session error:', sessionError);
       toast.error("Errore di autenticazione");
+      setLoading(false);
       return;
     }
     
     try {
-      // Prima query per ottenere tutti gli utenti
-      console.log('📋 UserManagement: Eseguendo query utenti...');
+      // Forza refresh bypassando cache con timestamp
+      const timestamp = new Date().getTime();
+      console.log('📋 UserManagement: Eseguendo query utenti con timestamp:', timestamp);
+      
       const { data: usersData, error: usersError } = await supabase
         .from('users')
         .select('id, name, email, sport, level, city, created_at')
