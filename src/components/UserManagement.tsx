@@ -6,9 +6,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Users, Search, Filter, Trophy, TrendingUp, Edit, Trash2, ArrowLeft } from "lucide-react";
+import { Users, Search, Filter, Trophy, TrendingUp, Edit, Trash2, ArrowLeft, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import UserSettings from "./UserSettings";
 
 interface UserData {
   id: string;
@@ -41,6 +42,9 @@ const UserManagement = ({ onBack, refreshKey }: UserManagementProps) => {
   const [sportFilter, setSportFilter] = useState("all");
   // Aggiunge un timestamp per forzare il refresh dei dati
   const [dataTimestamp, setDataTimestamp] = useState(Date.now());
+  // Stato per il profilo utente selezionato
+  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
+  const [showUserProfile, setShowUserProfile] = useState(false);
 
   useEffect(() => {
     console.log('📊 UserManagement: refreshKey changed to:', refreshKey);
@@ -354,6 +358,17 @@ const UserManagement = ({ onBack, refreshKey }: UserManagementProps) => {
                       <TableCell>
                         <div className="flex gap-2">
                           <Button
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setShowUserProfile(true);
+                            }}
+                            size="sm"
+                            variant="outline"
+                            className="border-blue-400 text-blue-400 hover:bg-blue-400/10"
+                          >
+                            <User className="w-4 h-4" />
+                          </Button>
+                          <Button
                             onClick={() => handleEditUser(user.id)}
                             size="sm"
                             variant="outline"
@@ -386,6 +401,22 @@ const UserManagement = ({ onBack, refreshKey }: UserManagementProps) => {
           <h3 className="text-white text-xl font-semibold mb-2">Nessun utente trovato</h3>
           <p className="text-blue-200">Modifica i filtri di ricerca per trovare gli utenti</p>
         </div>
+      )}
+
+      {/* Modal Profilo Utente */}
+      {selectedUser && (
+        <UserSettings
+          isOpen={showUserProfile}
+          onClose={() => {
+            setShowUserProfile(false);
+            setSelectedUser(null);
+          }}
+          user={selectedUser}
+          onProfileUpdate={() => {
+            console.log('🔄 UserManagement: Profile updated, reloading users...');
+            loadUsers(); // Ricarica la lista utenti quando un profilo viene aggiornato
+          }}
+        />
       )}
     </div>
   );
