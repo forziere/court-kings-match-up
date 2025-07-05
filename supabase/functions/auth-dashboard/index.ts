@@ -77,9 +77,9 @@ Deno.serve(async (req) => {
         return paymentDate >= thirtyDaysAgo
       }).reduce((sum, p) => sum + p.amount, 0) || 0
 
-      // Utenti registrati
+      // Utenti registrati dalla tabella users (dati reali)
       const { data: users } = await supabase
-        .from('profiles')
+        .from('users')
         .select('created_at')
 
       const totaleUtenti = users?.length || 0
@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
         const userDate = new Date(u.created_at)
         const sevenDaysAgo = new Date()
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-        return userDate >= sevenDaysAgo
+        return userDate >= sevenDaysAgg
       }).length || 0
 
       // Prenotazioni oggi
