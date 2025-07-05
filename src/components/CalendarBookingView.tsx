@@ -12,7 +12,8 @@ import {
   Zap,
   CheckCircle2,
   AlertCircle,
-  Plus
+  Plus,
+  Star
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -263,6 +264,39 @@ const CalendarBookingView = ({ user, onBack }) => {
             className="lg:col-span-2"
           >
             <div className="space-y-6">
+              {/* Hero Video Section */}
+              <Card className="glass-card border-white/20 mb-6 overflow-hidden">
+                <div className="relative h-48 bg-gradient-to-r from-blue-600 to-purple-600">
+                  <video 
+                    autoPlay 
+                    muted 
+                    loop 
+                    className="absolute inset-0 w-full h-full object-cover opacity-60"
+                    poster="/placeholder-video-poster.jpg"
+                  >
+                    <source src="/hero-sports-video.mp4" type="video/mp4" />
+                    {/* Fallback gradient if video doesn't load */}
+                  </video>
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent flex items-center">
+                    <div className="p-6">
+                      <h2 className="text-3xl font-bold text-white mb-2">Prenota il tuo campo</h2>
+                      <p className="text-blue-100 text-lg">Scegli data, orario e inizia a giocare!</p>
+                      <div className="flex items-center gap-4 mt-4">
+                        <Badge className="bg-white/20 text-white border-0">
+                          🏆 Oltre 100 campi
+                        </Badge>
+                        <Badge className="bg-white/20 text-white border-0">
+                          ⚡ Prenotazione istantanea
+                        </Badge>
+                        <Badge className="bg-white/20 text-white border-0">
+                          💯 Pagamento sicuro
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
               {/* Selezione campo */}
               <Card className="glass-card border-white/20">
                 <CardHeader>
@@ -273,30 +307,67 @@ const CalendarBookingView = ({ user, onBack }) => {
                     {facilities?.map((facility) => (
                       <Card
                         key={facility.id}
-                        className={`cursor-pointer transition-all duration-200 ${
+                        className={`cursor-pointer transition-all duration-300 hover:scale-105 ${
                           selectedFacility?.id === facility.id
-                            ? 'bg-white/20 border-white/40'
-                            : 'bg-white/5 border-white/10 hover:bg-white/10'
+                            ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-400/50 shadow-lg shadow-blue-500/25'
+                            : 'bg-white/5 border-white/10 hover:bg-white/10 hover:shadow-xl'
                         }`}
                         onClick={() => setSelectedFacility(facility)}
                       >
-                        <CardContent className="p-4">
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">
-                              {facility.sport.charAt(0)}
-                            </div>
-                            <div>
-                              <h4 className="text-white font-medium">{facility.name}</h4>
-                              <p className="text-blue-200 text-sm">{facility.sport}</p>
+                        <CardContent className="p-4 relative overflow-hidden">
+                          {/* Sport icon background */}
+                          <div className="absolute top-2 right-2 opacity-20">
+                            <div className="text-6xl">
+                              {facility.sport === 'Calcio' ? '⚽' : 
+                               facility.sport === 'Tennis' ? '🎾' :
+                               facility.sport === 'Padel' ? '🏓' :
+                               facility.sport === 'Basket' ? '🏀' : '🏐'}
                             </div>
                           </div>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1 text-blue-200 text-sm">
-                              <MapPin className="w-3 h-3" />
-                              {facility.location}
+                          
+                          <div className="relative z-10">
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className={`w-12 h-12 bg-gradient-to-r ${
+                                facility.sport === 'Calcio' ? 'from-green-500 to-emerald-500' :
+                                facility.sport === 'Tennis' ? 'from-yellow-500 to-orange-500' :
+                                facility.sport === 'Padel' ? 'from-blue-500 to-cyan-500' :
+                                facility.sport === 'Basket' ? 'from-orange-500 to-red-500' :
+                                'from-purple-500 to-pink-500'
+                              } rounded-xl flex items-center justify-center text-white text-lg font-bold shadow-lg`}>
+                                {facility.sport.charAt(0)}
+                              </div>
+                              <div>
+                                <h4 className="text-white font-bold text-lg">{facility.name}</h4>
+                                <p className="text-blue-200 text-sm font-medium">{facility.sport}</p>
+                              </div>
                             </div>
-                            <div className="text-white text-sm font-medium">
-                              €{formatPrice(facility.base_price_per_30min)}/30min
+                            
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-1 text-blue-200 text-sm">
+                                  <MapPin className="w-4 h-4" />
+                                  {facility.location}
+                                </div>
+                                <div className="text-right">
+                                  <div className="text-white font-bold text-lg">
+                                    €{formatPrice(facility.base_price_per_30min)}
+                                  </div>
+                                  <div className="text-blue-300 text-xs">per 30min</div>
+                                </div>
+                              </div>
+                              
+                              {/* Rating and features */}
+                              <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                                <div className="flex items-center gap-1">
+                                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                                  <span className="text-white text-sm font-medium">{facility.rating || '4.8'}</span>
+                                </div>
+                                {selectedFacility?.id === facility.id && (
+                                  <Badge className="bg-green-500/20 text-green-300 border-green-400/30 animate-pulse">
+                                    ✓ Selezionato
+                                  </Badge>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </CardContent>
@@ -347,14 +418,23 @@ const CalendarBookingView = ({ user, onBack }) => {
                               size="sm"
                               onClick={() => setSelectedTimeSlot(slot.start)}
                               className={cn(
-                                "flex flex-col h-auto py-2 text-xs",
+                                "flex flex-col h-auto py-3 px-4 text-sm font-medium transition-all duration-300",
                                 isSelected 
-                                  ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white" 
-                                  : "border-white/30 text-white hover:bg-white/10"
+                                  ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg shadow-green-500/25 scale-105" 
+                                  : "border-white/30 text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-purple-500/20 hover:border-blue-400/50 hover:scale-105"
                               )}
                             >
-                              <span>{slot.start}</span>
-                              <span className="opacity-75">€{formatPrice(price)}</span>
+                              <div className="flex items-center gap-2">
+                                <Clock className="w-3 h-3" />
+                                <span className="font-bold">{slot.start}</span>
+                              </div>
+                              <div className="flex items-center gap-1 opacity-90">
+                                <Euro className="w-3 h-3" />
+                                <span className="text-xs">{formatPrice(price)}</span>
+                              </div>
+                              {isSelected && (
+                                <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-ping" />
+                              )}
                             </Button>
                           );
                         })}
