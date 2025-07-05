@@ -163,6 +163,7 @@ const DashboardView = ({ user, onLogout }) => {
   }
 
   if (showUserManagement) {
+    console.log('🎯 Showing UserManagement component');
     return <UserManagement onBack={() => setShowUserManagement(false)} />;
   }
 
@@ -597,7 +598,11 @@ const DashboardView = ({ user, onLogout }) => {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-orange-600/80 to-yellow-500/60" />
                         <Button 
-                          onClick={() => setShowUserManagement(true)}
+                          onClick={() => {
+                            console.log('🎯 Cliccato tasto Gestione Utenti');
+                            setShowUserManagement(true);
+                            console.log('🎯 showUserManagement impostato a true');
+                          }}
                           className="relative z-10 w-full bg-transparent hover:bg-white/10 border-0 h-20 flex-col gap-2 text-white"
                         >
                           <Users className="w-6 h-6" />
