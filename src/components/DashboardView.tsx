@@ -27,12 +27,14 @@ import GestoreDashboard from "@/components/GestoreDashboard";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import UserSettings from "./UserSettings";
+import FindOpponentsModal from "./FindOpponentsModal";
 
 const DashboardView = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [userRole, setUserRole] = useState("user");
   const [isLoadingRole, setIsLoadingRole] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
+  const [showFindOpponents, setShowFindOpponents] = useState(false);
 
   useEffect(() => {
     checkUserRole();
@@ -295,7 +297,7 @@ const DashboardView = ({ user, onLogout }) => {
                     Prenota ora
                   </Button>
                   <Button 
-                    onClick={() => toast.success("Ricerca giocatori in corso...")}
+                    onClick={() => setShowFindOpponents(true)}
                     variant="outline"
                     className="border-white/30 text-white hover:bg-white/10"
                   >
@@ -554,7 +556,7 @@ const DashboardView = ({ user, onLogout }) => {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-green-600/80 to-green-400/60" />
                       <Button 
-                        onClick={() => toast.success("Ricerca giocatori in corso...")}
+                        onClick={() => setShowFindOpponents(true)}
                         className="relative z-10 w-full bg-transparent hover:bg-white/10 border-0 h-20 flex-col gap-2 text-white"
                       >
                         <Target className="w-6 h-6" />
@@ -590,6 +592,13 @@ const DashboardView = ({ user, onLogout }) => {
       <UserSettings 
         isOpen={showSettings} 
         onClose={() => setShowSettings(false)} 
+        user={user} 
+      />
+
+      {/* Find Opponents Modal */}
+      <FindOpponentsModal 
+        isOpen={showFindOpponents} 
+        onClose={() => setShowFindOpponents(false)} 
         user={user} 
       />
     </div>
