@@ -35,14 +35,25 @@ const FindOpponentsModal = ({ isOpen, onClose, user, refreshKey }: FindOpponents
   const [loading, setLoading] = useState(false);
   // Aggiunge un timestamp per forzare il refresh dei dati  
   const [dataTimestamp, setDataTimestamp] = useState(Date.now());
+  // Traccia l'ultimo refreshKey processato
+  const [lastRefreshKey, setLastRefreshKey] = useState(0);
 
   useEffect(() => {
-    console.log('🔍 FindOpponentsModal: useEffect triggered - isOpen:', isOpen, 'user:', !!user, 'refreshKey:', refreshKey);
+    console.log('🔍 FindOpponentsModal: useEffect triggered - isOpen:', isOpen, 'user:', !!user, 'refreshKey:', refreshKey, 'lastRefreshKey:', lastRefreshKey);
+    
     if (isOpen && user) {
-      console.log('🔍 FindOpponentsModal: Loading opponents with refreshKey:', refreshKey);
-      // Svuota la lista prima del reload per forzare refresh
-      setOpponents([]);
-      findOpponents();
+      // Se il refreshKey è cambiato o è la prima volta che si apre
+      if (refreshKey !== lastRefreshKey) {
+        console.log('🔍 FindOpponentsModal: Loading opponents with refreshKey:', refreshKey, '(was:', lastRefreshKey, ')');
+        // Svuota la lista prima del reload per forzare refresh
+        setOpponents([]);
+        findOpponents();
+        setLastRefreshKey(refreshKey || 0);
+      }
+    } else if (refreshKey && refreshKey !== lastRefreshKey) {
+      // Modal chiuso ma refreshKey cambiato - segna per refresh futuro
+      console.log('🔍 FindOpponentsModal: Modal closed but refreshKey changed, will refresh on next open');
+      setLastRefreshKey(refreshKey);
     }
   }, [isOpen, user, refreshKey]);
 
