@@ -57,6 +57,17 @@ const DashboardView = ({ user, onLogout }) => {
     }
   }, [user, roleLoaded]);
 
+  // Listener per il cambio forzato al tab gestore dall'AdminDashboard
+  useEffect(() => {
+    const handleSwitchToGestore = () => {
+      console.log('🎯 Received switchToGestore event, changing tab');
+      setActiveTab("gestore");
+    };
+
+    window.addEventListener('switchToGestore', handleSwitchToGestore);
+    return () => window.removeEventListener('switchToGestore', handleSwitchToGestore);
+  }, []);
+
   const checkUserRole = async () => {
     console.log("🔍 Checking user role for:", user, "roleLoaded:", roleLoaded);
     

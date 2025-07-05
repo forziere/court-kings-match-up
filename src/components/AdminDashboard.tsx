@@ -132,7 +132,14 @@ const AdminDashboard = ({ user, onBack, onShowUserManagement }) => {
             <Button 
               variant="outline" 
               className="border-white/30 text-white hover:bg-white/10 px-6 py-3 rounded-xl"
-              onClick={() => onBack()}
+              onClick={() => {
+                onBack();
+                // Forza il cambio al tab gestore dopo un breve delay
+                setTimeout(() => {
+                  const event = new CustomEvent('switchToGestore');
+                  window.dispatchEvent(event);
+                }, 100);
+              }}
             >
               🏢 Gestore Campi
             </Button>
