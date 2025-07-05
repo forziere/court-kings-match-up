@@ -39,10 +39,16 @@ const UserManagement = ({ onBack, refreshKey }: UserManagementProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [levelFilter, setLevelFilter] = useState("all");
   const [sportFilter, setSportFilter] = useState("all");
+  // Aggiunge un timestamp per forzare il refresh dei dati
+  const [dataTimestamp, setDataTimestamp] = useState(Date.now());
 
   useEffect(() => {
     loadUsers();
-  }, [refreshKey]);
+    // Aggiorna il timestamp ogni volta che refreshKey cambia
+    if (refreshKey > 0) {
+      setDataTimestamp(Date.now());
+    }
+  }, [refreshKey, dataTimestamp]);
 
   const loadUsers = async () => {
     console.log('🔍 UserManagement: Iniziando caricamento utenti...');

@@ -45,7 +45,12 @@ const DashboardView = ({ user, onLogout }) => {
 
   // Funzione per aggiornare i dati dopo modifica profilo
   const handleProfileUpdate = () => {
+    // Incrementa refreshKey e forza un nuovo timestamp
     setRefreshKey(prev => prev + 1);
+    // Aggiunge un piccolo delay per assicurarsi che i dati siano stati salvati
+    setTimeout(() => {
+      setRefreshKey(prev => prev + 1);
+    }, 2000);
   };
 
   // Debug state

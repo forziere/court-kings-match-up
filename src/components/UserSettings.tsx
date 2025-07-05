@@ -171,8 +171,10 @@ const UserSettings = ({ isOpen, onClose, user, onProfileUpdate }: UserSettingsPr
 
       toast.success("Profilo aggiornato con successo!");
       setIsEditing(false);
-              // Forza un reload completo dei dati aggiornando lo stato
-              window.location.reload();
+      // Forza reload dei dati dopo 1 secondo per essere sicuri che siano salvati
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       console.error('Error saving profile:', error);
       toast.error("Errore nel salvataggio del profilo");

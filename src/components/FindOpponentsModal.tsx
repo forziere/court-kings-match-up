@@ -33,12 +33,18 @@ interface FindOpponentsModalProps {
 const FindOpponentsModal = ({ isOpen, onClose, user, refreshKey }: FindOpponentsModalProps) => {
   const [opponents, setOpponents] = useState<Opponent[]>([]);
   const [loading, setLoading] = useState(false);
+  // Aggiunge un timestamp per forzare il refresh dei dati  
+  const [dataTimestamp, setDataTimestamp] = useState(Date.now());
 
   useEffect(() => {
     if (isOpen && user) {
       findOpponents();
+      // Aggiorna il timestamp ogni volta che refreshKey cambia
+      if (refreshKey && refreshKey > 0) {
+        setDataTimestamp(Date.now());
+      }
     }
-  }, [isOpen, user, refreshKey]);
+  }, [isOpen, user, refreshKey, dataTimestamp]);
 
   const findOpponents = async () => {
     setLoading(true);
