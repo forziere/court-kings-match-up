@@ -181,13 +181,29 @@ const DashboardView = ({ user, onLogout }) => {
 
       <div className="container mx-auto px-6 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-white/10 border border-white/20 rounded-xl p-1">
+          <TabsList className="bg-white/10 border border-white/20 rounded-xl p-1 flex-wrap">
             <TabsTrigger 
               value="dashboard" 
               className="data-[state=active]:bg-white/20 data-[state=active]:text-white text-blue-200 rounded-lg"
             >
               Dashboard
             </TabsTrigger>
+            {(userRole === 'admin') && (
+              <TabsTrigger 
+                value="admin" 
+                className="data-[state=active]:bg-white/20 data-[state=active]:text-white text-blue-200 rounded-lg"
+              >
+                👑 Admin
+              </TabsTrigger>
+            )}
+            {(userRole === 'admin' || userRole === 'moderator') && (
+              <TabsTrigger 
+                value="gestore" 
+                className="data-[state=active]:bg-white/20 data-[state=active]:text-white text-blue-200 rounded-lg"
+              >
+                🏢 Gestore
+              </TabsTrigger>
+            )}
             <TabsTrigger 
               value="booking" 
               className="data-[state=active]:bg-white/20 data-[state=active]:text-white text-blue-200 rounded-lg"
