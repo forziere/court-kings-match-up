@@ -38,13 +38,14 @@ const FindOpponentsModal = ({ isOpen, onClose, user, refreshKey }: FindOpponents
 
   useEffect(() => {
     if (isOpen && user) {
+      console.log('🔍 FindOpponentsModal: Loading opponents with refreshKey:', refreshKey);
       findOpponents();
       // Aggiorna il timestamp ogni volta che refreshKey cambia
       if (refreshKey && refreshKey > 0) {
         setDataTimestamp(Date.now());
       }
     }
-  }, [isOpen, user, refreshKey, dataTimestamp]);
+  }, [isOpen, user, refreshKey]); // Rimuovo dataTimestamp dalle dipendenze
 
   const findOpponents = async () => {
     setLoading(true);
