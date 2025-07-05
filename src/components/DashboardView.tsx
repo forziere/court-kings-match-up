@@ -26,11 +26,13 @@ import AdminDashboard from "@/components/AdminDashboard";
 import GestoreDashboard from "@/components/GestoreDashboard";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import UserSettings from "./UserSettings";
 
 const DashboardView = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [userRole, setUserRole] = useState("user");
   const [isLoadingRole, setIsLoadingRole] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     checkUserRole();
@@ -206,7 +208,12 @@ const DashboardView = ({ user, onLogout }) => {
               <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
                 <Bell className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+              <Button 
+                onClick={() => setShowSettings(true)}
+                variant="ghost" 
+                size="icon" 
+                className="text-white hover:bg-white/20"
+              >
                 <Settings className="w-5 h-5" />
               </Button>
               <Button 
@@ -578,6 +585,13 @@ const DashboardView = ({ user, onLogout }) => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* User Settings Modal */}
+      <UserSettings 
+        isOpen={showSettings} 
+        onClose={() => setShowSettings(false)} 
+        user={user} 
+      />
     </div>
   );
 };
