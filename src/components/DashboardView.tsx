@@ -161,20 +161,20 @@ const DashboardView = ({ user, onLogout }) => {
 
   console.log('🎯 DashboardView render - showUserManagement:', showUserManagement, 'userRole:', userRole);
 
-  if (activeTab === "admin" && userRole === "admin") {
-    return <AdminDashboard user={user} onBack={() => setActiveTab("dashboard")} onShowUserManagement={() => setShowUserManagement(true)} />;
-  }
-
-  if (activeTab === "gestore" && (userRole === "admin" || userRole === "moderator")) {
-    return <GestoreDashboard user={user} onBack={() => setActiveTab("dashboard")} />;
-  }
-
   if (showUserManagement) {
     console.log('🎯 Showing UserManagement component');
     return <UserManagement onBack={() => {
       console.log('🎯 UserManagement onBack called');
       setShowUserManagement(false);
     }} />;
+  }
+
+  if (activeTab === "admin" && userRole === "admin") {
+    return <AdminDashboard user={user} onBack={() => setActiveTab("dashboard")} onShowUserManagement={() => setShowUserManagement(true)} />;
+  }
+
+  if (activeTab === "gestore" && (userRole === "admin" || userRole === "moderator")) {
+    return <GestoreDashboard user={user} onBack={() => setActiveTab("dashboard")} />;
   }
 
   if (activeTab === "booking") {
