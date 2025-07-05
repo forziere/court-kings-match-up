@@ -21,6 +21,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import LoginModal from "@/components/LoginModal";
 import DashboardView from "@/components/DashboardView";
 import CalendarBookingView from "@/components/CalendarBookingView";
+import CityFieldsSearch from "@/components/CityFieldsSearch";
 import SportSelector from "@/components/SportSelector";
 import { toast } from "sonner";
 
@@ -39,6 +40,7 @@ const Index = ({ user: propUser, isLoggedIn: propIsLoggedIn, onLogin, onLogout }
   const [showSportSelector, setShowSportSelector] = useState(false);
   const [selectedSport, setSelectedSport] = useState(null);
   const [showBooking, setShowBooking] = useState(false);
+  const [showCitySearch, setShowCitySearch] = useState(false);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -109,6 +111,10 @@ const Index = ({ user: propUser, isLoggedIn: propIsLoggedIn, onLogin, onLogout }
       onLogout();
     }
   };
+
+  if (showCitySearch) {
+    return <CityFieldsSearch onBack={() => setShowCitySearch(false)} />;
+  }
 
   if (showBooking) {
     return <CalendarBookingView user={user} onBack={() => setShowBooking(false)} />;
@@ -237,7 +243,7 @@ const Index = ({ user: propUser, isLoggedIn: propIsLoggedIn, onLogin, onLogout }
             </div>
             <div 
               className="glass-card rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transition-all duration-300 hover:shadow-xl"
-              onClick={() => setShowBooking(true)}
+              onClick={() => setShowCitySearch(true)}
             >
               <img 
                 src="/lovable-uploads/eaf27e54-66aa-49f2-b23d-704145ba50ad.png"
@@ -281,7 +287,7 @@ const Index = ({ user: propUser, isLoggedIn: propIsLoggedIn, onLogin, onLogout }
               Inizia a giocare
             </Button>
             <Button 
-              onClick={() => setShowBooking(true)}
+              onClick={() => setShowCitySearch(true)}
               variant="outline" 
               size="lg"
               className="border-2 border-white/30 text-white hover:bg-white/10 px-12 py-4 text-lg rounded-full backdrop-blur-sm"
