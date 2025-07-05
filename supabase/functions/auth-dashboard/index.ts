@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
         const userDate = new Date(u.created_at)
         const sevenDaysAgo = new Date()
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-        return userDate >= sevenDaysAgg
+        return userDate >= sevenDaysAgo
       }).length || 0
 
       // Prenotazioni oggi
