@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import LoginModal from "@/components/LoginModal";
 import DashboardView from "@/components/DashboardView";
+import CalendarBookingView from "@/components/CalendarBookingView";
 import SportSelector from "@/components/SportSelector";
 import { toast } from "sonner";
 
@@ -35,6 +36,7 @@ const Index = ({ user: propUser, isLoggedIn: propIsLoggedIn, onLogin, onLogout }
   const [user, setUser] = useState(propUser || null);
   const [showSportSelector, setShowSportSelector] = useState(false);
   const [selectedSport, setSelectedSport] = useState(null);
+  const [showBooking, setShowBooking] = useState(false);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -105,6 +107,10 @@ const Index = ({ user: propUser, isLoggedIn: propIsLoggedIn, onLogin, onLogout }
       onLogout();
     }
   };
+
+  if (showBooking) {
+    return <CalendarBookingView user={user} onBack={() => setShowBooking(false)} />;
+  }
 
   if (isLoggedIn && user) {
     return <DashboardView user={user} onLogout={handleLogout} />;
@@ -255,11 +261,13 @@ const Index = ({ user: propUser, isLoggedIn: propIsLoggedIn, onLogin, onLogout }
               Inizia a giocare
             </Button>
             <Button 
+              onClick={() => setShowBooking(true)}
               variant="outline" 
               size="lg"
               className="border-2 border-white/30 text-white hover:bg-white/10 px-12 py-4 text-lg rounded-full backdrop-blur-sm"
             >
-              Scopri di più
+              <Calendar className="w-5 h-5 mr-2" />
+              Scopri i campi
             </Button>
           </motion.div>
 

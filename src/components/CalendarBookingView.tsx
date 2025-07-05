@@ -130,6 +130,11 @@ const CalendarBookingView = ({ user, onBack }) => {
       return;
     }
 
+    if (!user) {
+      toast.error("Effettua il login per procedere con la prenotazione");
+      return;
+    }
+
     try {
       const startTime = selectedTimeSlot;
       const [hour, minute] = startTime.split(':').map(Number);
