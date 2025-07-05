@@ -36,11 +36,15 @@ const UserSettings = ({ isOpen, onClose, user }: UserSettingsProps) => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Emoji divertenti per la selezione
+  // Emoji divertenti per la selezione (con più opzioni e stile Simpson)
   const funEmojis = [
     '😊', '😎', '🤩', '😋', '🤗', '😄', '🥳', '😸', '🤖', '🦸',
     '🎯', '🏆', '⚡', '🔥', '💪', '🎮', '🎵', '🌟', '🚀', '💎',
-    '🦄', '🌈', '⭐', '🎪', '🎭', '🎨', '🎸', '🎤', '🎲', '🎊'
+    '🦄', '🌈', '⭐', '🎪', '🎭', '🎨', '🎸', '🎤', '🎲', '🎊',
+    '👨', '👩', '👶', '👦', '👧', '🍩', '🍺', '📺', '🏠', '🚗',
+    '💀', '🤡', '🐶', '🐱', '🎃', '🌮', '🍕', '🍔', '🍟', '🌭',
+    '🤓', '😴', '😵', '🤯', '🥴', '😜', '🤪', '😂', '🤣', '😭',
+    '🔫', '💣', '⚽', '🏀', '🎾', '🏈', '⚾', '🏐', '🏓', '🎱'
   ];
 
   useEffect(() => {
@@ -127,7 +131,7 @@ const UserSettings = ({ isOpen, onClose, user }: UserSettingsProps) => {
 
       if (profileError) throw profileError;
 
-      // Aggiorna user_stats
+      // Aggiorna user_stats con chiave specifica per evitare duplicati
       const { error: statsError } = await supabase
         .from('user_stats')
         .upsert({
@@ -137,6 +141,8 @@ const UserSettings = ({ isOpen, onClose, user }: UserSettingsProps) => {
           preferred_hand: profileData.preferredHand,
           preferred_position: profileData.preferredPosition,
           preferred_match_type: profileData.preferredMatchType
+        }, {
+          onConflict: 'user_id'
         });
 
       if (statsError) throw statsError;
@@ -256,8 +262,8 @@ const UserSettings = ({ isOpen, onClose, user }: UserSettingsProps) => {
                             <SelectValue placeholder={profileData.preferredHand} />
                           </SelectTrigger>
                           <SelectContent className="bg-slate-800 border-slate-600">
-                            <SelectItem value="Destro">Destro</SelectItem>
-                            <SelectItem value="Sinistro">Sinistro</SelectItem>
+                            <SelectItem value="Destro" className="text-white hover:bg-slate-700">Destro</SelectItem>
+                            <SelectItem value="Sinistro" className="text-white hover:bg-slate-700">Sinistro</SelectItem>
                           </SelectContent>
                         </Select>
                       ) : (
@@ -281,9 +287,9 @@ const UserSettings = ({ isOpen, onClose, user }: UserSettingsProps) => {
                             <SelectValue placeholder={profileData.preferredPosition} />
                           </SelectTrigger>
                           <SelectContent className="bg-slate-800 border-slate-600">
-                            <SelectItem value="Destra">Destra</SelectItem>
-                            <SelectItem value="Sinistra">Sinistra</SelectItem>
-                            <SelectItem value="Centro">Centro</SelectItem>
+                            <SelectItem value="Destra" className="text-white hover:bg-slate-700">Destra</SelectItem>
+                            <SelectItem value="Sinistra" className="text-white hover:bg-slate-700">Sinistra</SelectItem>
+                            <SelectItem value="Centro" className="text-white hover:bg-slate-700">Centro</SelectItem>
                           </SelectContent>
                         </Select>
                       ) : (
@@ -307,9 +313,9 @@ const UserSettings = ({ isOpen, onClose, user }: UserSettingsProps) => {
                             <SelectValue placeholder={profileData.preferredMatchType} />
                           </SelectTrigger>
                           <SelectContent className="bg-slate-800 border-slate-600">
-                            <SelectItem value="Amichevole">Amichevole</SelectItem>
-                            <SelectItem value="Competitiva">Competitiva</SelectItem>
-                            <SelectItem value="Entrambe">Entrambe</SelectItem>
+                            <SelectItem value="Amichevole" className="text-white hover:bg-slate-700">Amichevole</SelectItem>
+                            <SelectItem value="Competitiva" className="text-white hover:bg-slate-700">Competitiva</SelectItem>
+                            <SelectItem value="Entrambe" className="text-white hover:bg-slate-700">Entrambe</SelectItem>
                           </SelectContent>
                         </Select>
                       ) : (
@@ -333,9 +339,9 @@ const UserSettings = ({ isOpen, onClose, user }: UserSettingsProps) => {
                             <SelectValue placeholder={profileData.preferredTime} />
                           </SelectTrigger>
                           <SelectContent className="bg-slate-800 border-slate-600">
-                            <SelectItem value="Mattina">Mattina</SelectItem>
-                            <SelectItem value="Pomeriggio">Pomeriggio</SelectItem>
-                            <SelectItem value="Sera">Sera</SelectItem>
+                            <SelectItem value="Mattina" className="text-white hover:bg-slate-700">Mattina</SelectItem>
+                            <SelectItem value="Pomeriggio" className="text-white hover:bg-slate-700">Pomeriggio</SelectItem>
+                            <SelectItem value="Sera" className="text-white hover:bg-slate-700">Sera</SelectItem>
                           </SelectContent>
                         </Select>
                       ) : (
@@ -359,20 +365,28 @@ const UserSettings = ({ isOpen, onClose, user }: UserSettingsProps) => {
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">Persone con cui gioca di più</h3>
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-slate-800 rounded-xl p-4 text-center">
+              <Button
+                onClick={() => toast.info("Funzione Partner frequenti in sviluppo")}
+                variant="ghost"
+                className="bg-slate-800 rounded-xl p-4 text-center h-auto flex-col hover:bg-slate-700"
+              >
                 <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mb-2 flex items-center justify-center">
                   <Users2 className="w-6 h-6 text-white" />
                 </div>
                 <p className="text-white text-sm">Partner frequenti</p>
-                <p className="text-slate-400 text-xs">Aggiungi amici</p>
-              </div>
-              <div className="bg-slate-800 rounded-xl p-4 text-center">
+                <p className="text-slate-400 text-xs">Trova compagni di gioco</p>
+              </Button>
+              <Button
+                onClick={() => toast.info("Funzione Team in sviluppo")}
+                variant="ghost"
+                className="bg-slate-800 rounded-xl p-4 text-center h-auto flex-col hover:bg-slate-700"
+              >
                 <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mx-auto mb-2 flex items-center justify-center">
                   <Gamepad2 className="w-6 h-6 text-white" />
                 </div>
                 <p className="text-white text-sm">Team</p>
                 <p className="text-slate-400 text-xs">Crea squadra</p>
-              </div>
+              </Button>
             </div>
           </div>
         </div>
