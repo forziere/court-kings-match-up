@@ -59,9 +59,47 @@ const BookingView = ({ user, onBack }) => {
     selectedSport === "all" || field.sport.toLowerCase() === selectedSport
   ) || [];
 
-  const handleBookField = (field, time) => {
-    setSelectedField({ ...field, selectedTime: time });
-    toast.success(`Campo ${field.name} prenotato per le ${time}!`);
+  const handleBookField = async (field, time) => {
+    try {
+      console.log("🚀 Iniziando prenotazione campo:", { field: field.name, time });
+      
+      // Chiama l'edge function per creare il pagamento
+      const { data, error } = await supabase.functions.invoke('create-booking-payment', {
+        body: {
+          bookingData: {
+            facilityId: field.id,
+            date: selectedDate,
+            time: time,
+            userEmail: user.email
+          }
+        }
+      });
+
+      if (error) {
+        console.error("❌ Errore nella prenotazione:", error);
+        toast.error("Errore nella prenotazione del campo");
+        return;
+      }
+
+      if (data?.url) {
+        console.log("✅ URL pagamento ricevuto, reindirizzamento...");
+        toast.success("Reindirizzamento al pagamento...");
+        
+        // Salva i dati della prenotazione in sessionStorage
+        sessionStorage.setItem('pending_booking', JSON.stringify({
+          fieldName: field.name,
+          date: selectedDate,
+          time: time,
+          amount: 0.50
+        }));
+        
+        // Apri Stripe checkout in una nuova tab
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error("❌ Errore prenotazione:", error);
+      toast.error("Errore durante la prenotazione");
+    }
   };
 
   const getSportIcon = (sport) => {

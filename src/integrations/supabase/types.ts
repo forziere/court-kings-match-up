@@ -9,6 +9,159 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          amount: number
+          booking_date: string
+          booking_time: string
+          created_at: string | null
+          facility_id: string | null
+          id: string
+          status: string | null
+          stripe_payment_intent_id: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          booking_date: string
+          booking_time: string
+          created_at?: string | null
+          facility_id?: string | null
+          id?: string
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          booking_date?: string
+          booking_time?: string
+          created_at?: string | null
+          facility_id?: string | null
+          id?: string
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "sports_facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          room_id: string | null
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          room_id?: string | null
+          sender_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          room_id?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "chat_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_rooms: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          id: string
+          name: string
+          type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          id?: string
+          name: string
+          type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          id?: string
+          name?: string
+          type?: string | null
+        }
+        Relationships: []
+      }
+      matches: {
+        Row: {
+          booking_id: string | null
+          created_at: string | null
+          id: string
+          match_date: string
+          notes: string | null
+          player1_id: string
+          player1_score: number | null
+          player2_id: string | null
+          player2_score: number | null
+          status: string | null
+          winner_id: string | null
+        }
+        Insert: {
+          booking_id?: string | null
+          created_at?: string | null
+          id?: string
+          match_date: string
+          notes?: string | null
+          player1_id: string
+          player1_score?: number | null
+          player2_id?: string | null
+          player2_score?: number | null
+          status?: string | null
+          winner_id?: string | null
+        }
+        Update: {
+          booking_id?: string | null
+          created_at?: string | null
+          id?: string
+          match_date?: string
+          notes?: string | null
+          player1_id?: string
+          player1_score?: number | null
+          player2_id?: string | null
+          player2_score?: number | null
+          status?: string | null
+          winner_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -95,6 +248,51 @@ export type Database = {
           rating?: number | null
           sport?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_stats: {
+        Row: {
+          achievements: string[] | null
+          badges: string[] | null
+          created_at: string | null
+          draws: number | null
+          games_played: number | null
+          id: string
+          level: number | null
+          losses: number | null
+          points: number | null
+          updated_at: string | null
+          user_id: string
+          wins: number | null
+        }
+        Insert: {
+          achievements?: string[] | null
+          badges?: string[] | null
+          created_at?: string | null
+          draws?: number | null
+          games_played?: number | null
+          id?: string
+          level?: number | null
+          losses?: number | null
+          points?: number | null
+          updated_at?: string | null
+          user_id: string
+          wins?: number | null
+        }
+        Update: {
+          achievements?: string[] | null
+          badges?: string[] | null
+          created_at?: string | null
+          draws?: number | null
+          games_played?: number | null
+          id?: string
+          level?: number | null
+          losses?: number | null
+          points?: number | null
+          updated_at?: string | null
+          user_id?: string
+          wins?: number | null
         }
         Relationships: []
       }
