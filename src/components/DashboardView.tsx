@@ -37,13 +37,33 @@ const DashboardView = ({ user, onLogout }) => {
 
   const checkUserRole = async () => {
     try {
-      const { data: userRoles } = await supabase
+      const { data: userRoles, error } = await supabase
         .from('user_roles')
         .select('role')
-        .eq('user_id', user.id)
-        .single();
+        .eq('user_id', user.id);
       
-      setUserRole(userRoles?.role || 'user');
+      console.log('User roles data:', userRoles, 'User ID:', user.id);
+      
+      if (error) {
+        console.error('Error fetching user roles:', error);
+        setUserRole('user');
+        return;
+      }
+      
+      if (userRoles && userRoles.length > 0) {
+        // Get the highest role (admin > moderator > user)
+        const roles = userRoles.map(r => r.role);
+        if (roles.includes('admin')) {
+          setUserRole('admin');
+        } else if (roles.includes('moderator')) {
+          setUserRole('moderator');
+        } else {
+          setUserRole('user');
+        }
+      } else {
+        console.log('No roles found for user, setting default user role');
+        setUserRole('user');
+      }
     } catch (error) {
       console.error('Error checking user role:', error);
       setUserRole('user');
