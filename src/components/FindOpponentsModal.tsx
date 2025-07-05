@@ -19,6 +19,7 @@ interface Opponent {
     games_played: number;
     wins: number;
     skill_level: string;
+    user_emoji: string;
   }[];
 }
 
@@ -61,7 +62,7 @@ const FindOpponentsModal = ({ isOpen, onClose, user }: FindOpponentsModalProps) 
         potentialOpponents?.map(async (opponent) => {
           const { data: stats } = await supabase
             .from('user_stats')
-            .select('elo_rating, games_played, wins, skill_level')
+            .select('elo_rating, games_played, wins, skill_level, user_emoji')
             .eq('user_id', opponent.id)
             .single();
           
@@ -71,7 +72,8 @@ const FindOpponentsModal = ({ isOpen, onClose, user }: FindOpponentsModalProps) 
               elo_rating: 1200,
               games_played: 0,
               wins: 0,
-              skill_level: 'principiante'
+              skill_level: 'principiante',
+              user_emoji: '😊'
             }]
           };
         }) || []
@@ -201,8 +203,8 @@ const FindOpponentsModal = ({ isOpen, onClose, user }: FindOpponentsModalProps) 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <Avatar className="w-10 h-10 bg-white/20">
-                          <AvatarFallback className="text-white font-bold">
-                            {opponent.name?.charAt(0)?.toUpperCase() || 'U'}
+                          <AvatarFallback className="text-white text-lg">
+                            {opponent.user_stats?.[0]?.user_emoji || opponent.name?.charAt(0)?.toUpperCase() || 'U'}
                           </AvatarFallback>
                         </Avatar>
                         <div>
