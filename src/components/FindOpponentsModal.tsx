@@ -57,6 +57,8 @@ const FindOpponentsModal = ({ isOpen, onClose, user, refreshKey }: FindOpponents
   const findOpponents = async () => {
     setLoading(true);
     try {
+      console.log('🔍 FindOpponentsModal: Starting findOpponents for user:', user.name);
+      
       // Cerca utenti con sport e livello simili
       const { data: potentialOpponents, error } = await supabase
         .from('users')
@@ -66,20 +68,26 @@ const FindOpponentsModal = ({ isOpen, onClose, user, refreshKey }: FindOpponents
         .neq('id', user.id)
         .limit(10);
 
+      console.log('📋 FindOpponentsModal: Found potential opponents:', potentialOpponents?.length, potentialOpponents);
+
       if (error) {
         console.error('Error finding opponents:', error);
         toast.error("Errore nella ricerca avversari");
+        setLoading(false);
         return;
       }
 
       // Ottieni le statistiche per ogni utente
       const opponentsWithStats = await Promise.all(
         potentialOpponents?.map(async (opponent) => {
+          console.log('📊 FindOpponentsModal: Loading stats for:', opponent.name, 'ID:', opponent.id);
           const { data: stats } = await supabase
             .from('user_stats')
             .select('elo_rating, games_played, wins, skill_level, user_emoji')
             .eq('user_id', opponent.id)
             .maybeSingle();
+          
+          console.log('📊 FindOpponentsModal: Stats for', opponent.name, ':', stats);
           
           return {
             ...opponent,
