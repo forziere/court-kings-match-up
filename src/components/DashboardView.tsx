@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   Users, 
@@ -22,10 +22,33 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BookingView from "@/components/BookingView";
 import TournamentView from "@/components/TournamentView";
+import AdminDashboard from "@/components/AdminDashboard";
+import GestoreDashboard from "@/components/GestoreDashboard";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const DashboardView = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [userRole, setUserRole] = useState("user");
+
+  useEffect(() => {
+    checkUserRole();
+  }, []);
+
+  const checkUserRole = async () => {
+    try {
+      const { data: userRoles } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .single();
+      
+      setUserRole(userRoles?.role || 'user');
+    } catch (error) {
+      console.error('Error checking user role:', error);
+      setUserRole('user');
+    }
+  };
 
   const mockMatches = [
     {
@@ -92,6 +115,14 @@ const DashboardView = ({ user, onLogout }) => {
       default: return "bg-gray-500";
     }
   };
+
+  if (activeTab === "admin" && userRole === "admin") {
+    return <AdminDashboard user={user} onBack={() => setActiveTab("dashboard")} />;
+  }
+
+  if (activeTab === "gestore" && (userRole === "admin" || userRole === "moderator")) {
+    return <GestoreDashboard user={user} onBack={() => setActiveTab("dashboard")} />;
+  }
 
   if (activeTab === "booking") {
     return <BookingView user={user} onBack={() => setActiveTab("dashboard")} />;
