@@ -250,7 +250,7 @@ const AdminDashboard = ({ user, onBack, onShowUserManagement }) => {
 
         {/* Quick Actions */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -281,6 +281,13 @@ const AdminDashboard = ({ user, onBack, onShowUserManagement }) => {
             className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold h-16 rounded-xl text-sm uppercase tracking-wider"
           >
             🛡️ BACKUP DATI
+          </Button>
+
+          <Button 
+            onClick={() => handleQuickAction('Analytics')}
+            className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold h-16 rounded-xl text-sm uppercase tracking-wider"
+          >
+            📊 ANALYTICS
           </Button>
         </motion.div>
       </div>
