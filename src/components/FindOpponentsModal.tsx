@@ -116,7 +116,12 @@ const FindOpponentsModal = ({ isOpen, onClose, user, refreshKey }: FindOpponents
           return aDiff - bDiff;
         });
 
-      setOpponents(filteredOpponents);
+      console.log('🎯 FindOpponentsModal: Setting opponents array with', filteredOpponents.length, 'opponents');
+      
+      // Forza un re-render completo creando un nuovo array
+      setOpponents([...filteredOpponents]);
+      
+      console.log('✅ FindOpponentsModal: Opponents updated successfully');
       
       if (filteredOpponents.length === 0) {
         toast.info("Nessun avversario trovato con il tuo livello in questo momento");
