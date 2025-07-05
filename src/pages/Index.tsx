@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
   Users, 
@@ -31,6 +32,7 @@ interface IndexProps {
 }
 
 const Index = ({ user: propUser, isLoggedIn: propIsLoggedIn, onLogin, onLogout }: IndexProps) => {
+  const navigate = useNavigate();
   const [showLogin, setShowLogin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(propIsLoggedIn || false);
   const [user, setUser] = useState(propUser || null);
@@ -143,12 +145,21 @@ const Index = ({ user: propUser, isLoggedIn: propIsLoggedIn, onLogin, onLogout }
               </div>
               <span className="text-2xl font-bold gradient-text">SportConnect</span>
             </div>
-            <Button 
-              onClick={() => setShowLogin(true)}
-              className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-8 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 neon-glow"
-            >
-              Unisciti ora
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => navigate('/auth')}
+                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 neon-glow"
+              >
+                🔐 Accesso Avanzato
+              </Button>
+              <Button 
+                onClick={() => setShowLogin(true)}
+                variant="outline"
+                className="border-white/30 text-white hover:bg-white/10 px-6 py-2 rounded-full"
+              >
+                Accesso Rapido
+              </Button>
+            </div>
           </nav>
         </motion.header>
 
