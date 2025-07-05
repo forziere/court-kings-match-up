@@ -1,18 +1,6 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { 
-  Calendar, 
-  Clock,
-  Plus,
-  MapPin,
-  User,
-  CheckCircle,
-  AlertCircle,
-  Building2
-} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -39,11 +27,9 @@ const GestoreDashboard = ({ user, onBack }) => {
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     cliente_nome: '',
-    cliente_cognome: '',
     campo_id: '',
     data_prenotazione: '',
     ora_inizio: '',
-    ora_fine: '',
     note: ''
   });
 
@@ -97,7 +83,7 @@ const GestoreDashboard = ({ user, onBack }) => {
   const handleCreateBooking = async (e) => {
     e.preventDefault();
     
-    if (!formData.campo_id || !formData.data_prenotazione || !formData.ora_inizio || !formData.ora_fine) {
+    if (!formData.campo_id || !formData.data_prenotazione || !formData.ora_inizio) {
       toast.error("Compila tutti i campi obbligatori");
       return;
     }
@@ -112,7 +98,7 @@ const GestoreDashboard = ({ user, onBack }) => {
           facility_id: formData.campo_id,
           booking_date: formData.data_prenotazione,
           start_time: formData.ora_inizio,
-          end_time: formData.ora_fine,
+          end_time: calculateEndTime(formData.ora_inizio),
           notes: formData.note
         }
       });
@@ -126,14 +112,12 @@ const GestoreDashboard = ({ user, onBack }) => {
       toast.success("Prenotazione creata con successo!");
       setFormData({
         cliente_nome: '',
-        cliente_cognome: '',
         campo_id: '',
         data_prenotazione: '',
         ora_inizio: '',
-        ora_fine: '',
         note: ''
       });
-      loadGestoreData(); // Ricarica i dati
+      loadGestoreData();
 
     } catch (error) {
       console.error('Create booking error:', error);
@@ -141,303 +125,242 @@ const GestoreDashboard = ({ user, onBack }) => {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'confirmed': return 'bg-green-500';
-      case 'pending': return 'bg-yellow-500';
-      case 'cancelled': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
+  const calculateEndTime = (startTime: string) => {
+    const [hours, minutes] = startTime.split(':').map(Number);
+    const endHours = hours + 1;
+    return `${endHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'confirmed': return 'Confermata';
-      case 'pending': return 'In Attesa';
-      case 'cancelled': return 'Annullata';
-      default: return status;
+  // Genera calendario del mese corrente
+  const generateCalendar = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+    
+    const calendar = [];
+    const weekdays = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
+    
+    // Aggiungi i giorni del mese
+    for (let day = 1; day <= daysInMonth; day++) {
+      const isAvailable = Math.random() > 0.3; // Simula disponibilità
+      calendar.push({
+        day,
+        isAvailable,
+        isToday: day === today.getDate()
+      });
     }
+    
+    return { calendar, weekdays, startingDayOfWeek };
   };
+
+  const { calendar, weekdays, startingDayOfWeek } = generateCalendar();
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-8 h-8 border-2 border-white border-t-transparent rounded-full"
-        />
+        <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 p-6">
       {/* Header */}
-      <motion.header 
-        className="relative bg-white/10 backdrop-blur-lg border-b border-white/20"
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-xl flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-white" />
-              </div>
+      <div className="text-center mb-8">
+        <div className="flex items-center justify-center gap-2 mb-4">
+          <div className="text-4xl">🏆</div>
+          <h1 className="text-4xl font-bold text-white">Sport Connect</h1>
+        </div>
+        <p className="text-blue-200 text-lg">La piattaforma completa per la gestione dei tuoi campi sportivi</p>
+        
+        {/* Tab Navigation */}
+        <div className="flex justify-center gap-4 mt-6">
+          <Button 
+            onClick={onBack}
+            variant="outline" 
+            className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+          >
+            👑 Admin
+          </Button>
+          <Button className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold">
+            📋 Gestore Campi
+          </Button>
+          <Button 
+            onClick={onBack}
+            variant="outline" 
+            className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+          >
+            👤 Utente
+          </Button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
+        {/* Nuova Prenotazione */}
+        <Card className="glass-card border-white/30">
+          <CardHeader>
+            <CardTitle className="text-white text-xl flex items-center gap-2">
+              📋 Nuova Prenotazione
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleCreateBooking} className="space-y-6">
               <div>
-                <h1 className="text-xl font-bold text-white">🏢 Gestore Dashboard</h1>
-                <p className="text-blue-200 text-sm">Gestione prenotazioni e campi</p>
+                <Label className="text-white font-medium">Nome Cliente</Label>
+                <Input
+                  placeholder="Inserisci nome cliente"
+                  value={formData.cliente_nome}
+                  onChange={(e) => setFormData({...formData, cliente_nome: e.target.value})}
+                  className="bg-white/10 border-white/30 text-white placeholder:text-blue-200 mt-2"
+                />
+              </div>
+
+              <div>
+                <Label className="text-white font-medium">Selezione Campo</Label>
+                <Select onValueChange={(value) => setFormData({...formData, campo_id: value})}>
+                  <SelectTrigger className="bg-white/10 border-white/30 text-white mt-2">
+                    <SelectValue placeholder="Scegli campo..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 border-gray-600">
+                    {facilities.map((facility: any) => (
+                      <SelectItem key={facility.id} value={facility.id}>
+                        {facility.name} - {facility.sport}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label className="text-white font-medium">Data</Label>
+                <Input
+                  type="date"
+                  value={formData.data_prenotazione}
+                  onChange={(e) => setFormData({...formData, data_prenotazione: e.target.value})}
+                  className="bg-white/10 border-white/30 text-white mt-2"
+                />
+              </div>
+
+              <div>
+                <Label className="text-white font-medium">Orario</Label>
+                <Select onValueChange={(value) => setFormData({...formData, ora_inizio: value})}>
+                  <SelectTrigger className="bg-white/10 border-white/30 text-white mt-2">
+                    <SelectValue placeholder="Seleziona orario..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 border-gray-600">
+                    <SelectItem value="09:00">09:00 - 10:00</SelectItem>
+                    <SelectItem value="10:00">10:00 - 11:00</SelectItem>
+                    <SelectItem value="11:00">11:00 - 12:00</SelectItem>
+                    <SelectItem value="14:00">14:00 - 15:00</SelectItem>
+                    <SelectItem value="15:00">15:00 - 16:00</SelectItem>
+                    <SelectItem value="16:00">16:00 - 17:00</SelectItem>
+                    <SelectItem value="17:00">17:00 - 18:00</SelectItem>
+                    <SelectItem value="18:00">18:00 - 19:00</SelectItem>
+                    <SelectItem value="19:00">19:00 - 20:00</SelectItem>
+                    <SelectItem value="20:00">20:00 - 21:00</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label className="text-white font-medium">Note</Label>
+                <Textarea
+                  placeholder="Note aggiuntive (opzionale)"
+                  value={formData.note}
+                  onChange={(e) => setFormData({...formData, note: e.target.value})}
+                  className="bg-white/10 border-white/30 text-white placeholder:text-blue-200 mt-2 min-h-20"
+                />
+              </div>
+
+              <Button 
+                type="submit"
+                className="w-full bg-gradient-to-r from-orange-500 to-yellow-600 hover:from-orange-600 hover:to-yellow-700 text-white font-semibold py-3 text-lg"
+              >
+                ✅ CONFERMA PRENOTAZIONE
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Calendario Prenotazioni */}
+        <Card className="glass-card border-white/30">
+          <CardHeader>
+            <CardTitle className="text-white text-xl flex items-center gap-2">
+              📅 Calendario Prenotazioni
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* Giorni della settimana */}
+            <div className="grid grid-cols-7 gap-2 mb-4">
+              {weekdays.map((day, index) => (
+                <div key={index} className="text-center text-white font-medium py-2">
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            {/* Calendario */}
+            <div className="grid grid-cols-7 gap-2 mb-6">
+              {/* Spazi vuoti per l'inizio del mese */}
+              {Array.from({ length: startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1 }).map((_, index) => (
+                <div key={`empty-${index}`} className="h-12"></div>
+              ))}
+              
+              {/* Giorni del mese */}
+              {calendar.map((dayInfo) => (
+                <div
+                  key={dayInfo.day}
+                  className={`h-12 flex items-center justify-center rounded-lg text-white font-medium cursor-pointer transition-all ${
+                    dayInfo.isAvailable 
+                      ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700' 
+                      : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600'
+                  } ${dayInfo.isToday ? 'ring-2 ring-white' : ''}`}
+                >
+                  {dayInfo.day}
+                </div>
+              ))}
+            </div>
+
+            {/* Legenda */}
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-gradient-to-r from-green-500 to-green-600 rounded"></div>
+                <span className="text-green-300">Disponibile</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-gradient-to-r from-orange-500 to-red-500 rounded"></div>
+                <span className="text-red-300">Prenotato</span>
               </div>
             </div>
-            <Button 
-              onClick={onBack}
-              variant="ghost" 
-              className="text-white hover:bg-white/20"
-            >
-              ← Torna alla Dashboard
-            </Button>
-          </div>
-        </div>
-      </motion.header>
+          </CardContent>
+        </Card>
+      </div>
 
-      <div className="container mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          
-          {/* Form Nuova Prenotazione */}
-          <motion.div
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <Card className="glass-card border-white/20 h-full">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Plus className="w-5 h-5" />
-                  Nuova Prenotazione
-                </CardTitle>
-                <CardDescription className="text-blue-200">
-                  Crea una prenotazione per un client
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleCreateBooking} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="cliente_nome" className="text-white">Nome Cliente</Label>
-                      <Input
-                        id="cliente_nome"
-                        value={formData.cliente_nome}
-                        onChange={(e) => setFormData({...formData, cliente_nome: e.target.value})}
-                        placeholder="Nome"
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="cliente_cognome" className="text-white">Cognome Cliente</Label>
-                      <Input
-                        id="cliente_cognome"
-                        value={formData.cliente_cognome}
-                        onChange={(e) => setFormData({...formData, cliente_cognome: e.target.value})}
-                        placeholder="Cognome"
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="campo_id" className="text-white">Campo *</Label>
-                    <Select 
-                      value={formData.campo_id} 
-                      onValueChange={(value) => setFormData({...formData, campo_id: value})}
-                    >
-                      <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                        <SelectValue placeholder="Seleziona campo..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {facilities.map((facility: any) => (
-                          <SelectItem key={facility.id} value={facility.id}>
-                            {facility.name} - {facility.sport}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="data_prenotazione" className="text-white">Data *</Label>
-                    <Input
-                      id="data_prenotazione"
-                      type="date"
-                      value={formData.data_prenotazione}
-                      onChange={(e) => setFormData({...formData, data_prenotazione: e.target.value})}
-                      className="bg-white/10 border-white/20 text-white"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="ora_inizio" className="text-white">Ora Inizio *</Label>
-                      <Select 
-                        value={formData.ora_inizio} 
-                        onValueChange={(value) => setFormData({...formData, ora_inizio: value})}
-                      >
-                        <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                          <SelectValue placeholder="Seleziona..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="09:00">09:00</SelectItem>
-                          <SelectItem value="10:30">10:30</SelectItem>
-                          <SelectItem value="12:00">12:00</SelectItem>
-                          <SelectItem value="14:00">14:00</SelectItem>
-                          <SelectItem value="15:30">15:30</SelectItem>
-                          <SelectItem value="17:00">17:00</SelectItem>
-                          <SelectItem value="18:30">18:30</SelectItem>
-                          <SelectItem value="20:00">20:00</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="ora_fine" className="text-white">Ora Fine *</Label>
-                      <Select 
-                        value={formData.ora_fine} 
-                        onValueChange={(value) => setFormData({...formData, ora_fine: value})}
-                      >
-                        <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                          <SelectValue placeholder="Seleziona..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="10:30">10:30</SelectItem>
-                          <SelectItem value="12:00">12:00</SelectItem>
-                          <SelectItem value="13:30">13:30</SelectItem>
-                          <SelectItem value="15:30">15:30</SelectItem>
-                          <SelectItem value="17:00">17:00</SelectItem>
-                          <SelectItem value="18:30">18:30</SelectItem>
-                          <SelectItem value="20:00">20:00</SelectItem>
-                          <SelectItem value="21:30">21:30</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="note" className="text-white">Note</Label>
-                    <Textarea
-                      id="note"
-                      value={formData.note}
-                      onChange={(e) => setFormData({...formData, note: e.target.value})}
-                      placeholder="Note aggiuntive (opzionale)"
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                      rows={3}
-                    />
-                  </div>
-
-                  <Button 
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
-                  >
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Conferma Prenotazione
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Prenotazioni di Oggi */}
-          <motion.div
-            initial={{ x: 20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <Card className="glass-card border-white/20 h-full">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
-                  Prenotazioni di Oggi
-                </CardTitle>
-                <CardDescription className="text-blue-200">
-                  {todayBookings.length} prenotazioni programmate
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4 max-h-96 overflow-y-auto">
-                {todayBookings.length > 0 ? todayBookings.map((booking) => (
-                  <div key={booking.id} className="bg-white/5 rounded-lg p-4 border border-white/10">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                          <User className="w-4 h-4 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-white font-medium">{booking.sports_facilities?.name}</p>
-                          <p className="text-blue-200 text-sm">{booking.sports_facilities?.sport}</p>
-                        </div>
-                      </div>
-                      <Badge className={`${getStatusColor(booking.status)} text-white`}>
-                        {getStatusText(booking.status)}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-blue-200">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        {booking.start_time} - {booking.end_time}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        €{(booking.total_amount / 100).toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                )) : (
-                  <div className="text-center py-8">
-                    <Calendar className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-                    <p className="text-blue-200">Nessuna prenotazione oggi</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
-
-        {/* Quick Actions */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+      {/* Pulsanti Azione */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto mt-8">
+        <Button 
+          onClick={() => toast.success("Visualizzazione prenotazioni...")}
+          className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-4 text-lg"
         >
-          <Card className="glass-card border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white">Azioni Rapide</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Button 
-                  onClick={() => toast.success("Visualizzazione prenotazioni in corso...")}
-                  className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 h-16 flex-col gap-2"
-                >
-                  <Calendar className="w-5 h-5" />
-                  Visualizza Prenotazioni
-                </Button>
-                
-                <Button 
-                  onClick={() => toast.success("Gestione orari in corso...")}
-                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 h-16 flex-col gap-2"
-                >
-                  <Clock className="w-5 h-5" />
-                  Gestione Orari
-                </Button>
-                
-                <Button 
-                  onClick={() => toast.success("Report campi in corso...")}
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 h-16 flex-col gap-2"
-                >
-                  <Building2 className="w-5 h-5" />
-                  Report Campi
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+          📋 VISUALIZZA PRENOTAZIONI
+        </Button>
+        <Button 
+          onClick={() => toast.success("Gestione orari...")}
+          className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold py-4 text-lg"
+        >
+          🕒 GESTIONE ORARI
+        </Button>
+        <Button 
+          onClick={() => toast.success("Report campi...")}
+          className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 text-lg"
+        >
+          📊 REPORT CAMPI
+        </Button>
       </div>
     </div>
   );
