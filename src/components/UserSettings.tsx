@@ -147,65 +147,26 @@ const UserSettings = ({ isOpen, onClose, user, onProfileUpdate }: UserSettingsPr
         throw profileError;
       }
 
-      // Controlla se esiste già user_stats
-      console.log('🔍 Checking existing user_stats...');
-      const { data: existingStats, error: checkError } = await supabase
+      // Usa UPSERT per gestire sia insert che update in una volta
+      console.log('🔄 Upserting user_stats...');
+      const { error: upsertError, data: upsertData } = await supabase
         .from('user_stats')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (checkError) {
-        console.error('❌ Check error:', checkError);
-        throw checkError;
-      }
-
-      console.log('📊 Existing stats:', existingStats);
-
-      if (existingStats) {
-        // Aggiorna record esistente
-        console.log('🔄 Updating existing stats...');
-        console.log('📝 Data to update:', {
+        .upsert({
+          user_id: user.id,
           user_emoji: profileData.userEmoji,
           profile_photo_url: profileData.profilePhotoUrl,
           preferred_hand: profileData.preferredHand,
           preferred_position: profileData.preferredPosition,
-          preferred_match_type: profileData.preferredMatchType
-        });
-        
-        const { error: updateError, data: updateData } = await supabase
-          .from('user_stats')
-          .update({
-            user_emoji: profileData.userEmoji,
-            profile_photo_url: profileData.profilePhotoUrl,
-            preferred_hand: profileData.preferredHand,
-            preferred_position: profileData.preferredPosition,
-            preferred_match_type: profileData.preferredMatchType,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', existingStats.id)  // Usa l'ID del record invece di user_id
-          .select();
+          preferred_match_type: profileData.preferredMatchType,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id',
+          ignoreDuplicates: false
+        })
+        .select();
 
-        console.log('📝 Update result:', { updateError, updateData });
-        if (updateError) throw updateError;
-      } else {
-        // Crea nuovo record
-        console.log('➕ Creating new stats...');
-        const { error: insertError, data: insertData } = await supabase
-          .from('user_stats')
-          .insert({
-            user_id: user.id,
-            user_emoji: profileData.userEmoji,
-            profile_photo_url: profileData.profilePhotoUrl,
-            preferred_hand: profileData.preferredHand,
-            preferred_position: profileData.preferredPosition,
-            preferred_match_type: profileData.preferredMatchType
-          })
-          .select();
-
-        console.log('📝 Insert result:', { insertError, insertData });
-        if (insertError) throw insertError;
-      }
+      console.log('📝 Upsert result:', { upsertError, upsertData });
+      if (upsertError) throw upsertError;
 
       toast.success("Profilo aggiornato con successo!");
       setIsEditing(false);
