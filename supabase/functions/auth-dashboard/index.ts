@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
       const { data: payments } = await supabase
         .from('payments')
         .select('amount, created_at')
-        .eq('status', 'completed')
+        .eq('status', 'succeeded')
 
       const ricaviTotali = payments?.reduce((sum, p) => sum + p.amount, 0) || 0
       const ricaviMese = payments?.filter(p => {

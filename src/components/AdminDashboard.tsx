@@ -150,7 +150,7 @@ const AdminDashboard = ({ user, onBack }) => {
                 </div>
               </div>
               <div className="text-4xl font-bold text-yellow-400 mb-2">
-                {stats.ricavi?.ricavi_totali ? `€${stats.ricavi.ricavi_totali.toFixed(0)}` : '€15,420'}
+                €{stats.ricavi?.ricavi_totali?.toFixed(2) || '0.00'}
               </div>
               <p className="text-green-400 text-sm mb-4">
                 +12% rispetto al mese scorso
@@ -173,10 +173,10 @@ const AdminDashboard = ({ user, onBack }) => {
                 </div>
               </div>
               <div className="text-4xl font-bold text-yellow-400 mb-2">
-                {stats.utenti?.totale_utenti || '1,247'}
+                {stats.utenti?.totale_utenti || '0'}
               </div>
               <p className="text-blue-400 text-sm mb-4">
-                +{stats.utenti?.nuovi_utenti_settimana || '45'} nuovi utenti questa settimana
+                +{stats.utenti?.nuovi_utenti_settimana || '0'} nuovi utenti questa settimana
               </p>
               <div className="bg-white/5 rounded-lg p-3 text-center">
                 <TrendingUp className="w-6 h-6 text-blue-400 mx-auto mb-1" />
@@ -196,10 +196,10 @@ const AdminDashboard = ({ user, onBack }) => {
                 </div>
               </div>
               <div className="text-4xl font-bold text-yellow-400 mb-2">
-                {stats.prenotazioni?.prenotazioni_oggi || '78'}
+                {stats.prenotazioni?.prenotazioni_oggi || '0'}
               </div>
               <p className="text-blue-200 text-sm mb-4">
-                Campo 1: 12 | Campo 2: 15 | Campo 3: 18
+                Confermate: {stats.prenotazioni?.confermate_oggi || '0'} | In attesa: {(stats.prenotazioni?.prenotazioni_oggi || 0) - (stats.prenotazioni?.confermate_oggi || 0)}
               </p>
               <div className="bg-white/5 rounded-lg p-3 text-center">
                 <BarChart3 className="w-6 h-6 text-red-400 mx-auto mb-1" />
@@ -219,10 +219,10 @@ const AdminDashboard = ({ user, onBack }) => {
                 </div>
               </div>
               <div className="text-4xl font-bold text-yellow-400 mb-2">
-                {stats.campi?.totale_campi || '12'}
+                {stats.campi?.totale_campi || '0'}
               </div>
               <p className="text-blue-200 text-sm mb-4">
-                Campi attivi: {stats.campi?.campi_attivi || '10'} | In manutenzione: {stats.campi?.campi_manutenzione || '2'}
+                Campi attivi: {stats.campi?.campi_attivi || '0'} | In manutenzione: {stats.campi?.campi_manutenzione || '0'}
               </p>
               <div className="bg-white/5 rounded-lg p-3 text-center">
                 <Settings className="w-6 h-6 text-purple-400 mx-auto mb-1" />
