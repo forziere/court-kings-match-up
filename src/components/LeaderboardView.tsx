@@ -25,10 +25,7 @@ const LeaderboardView = ({ user, onBack }) => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('user_stats')
-        .select(`
-          *,
-          users!inner(name, email)
-        `)
+        .select('*')
         .order('points', { ascending: false })
         .limit(50);
       
@@ -152,7 +149,7 @@ const LeaderboardView = ({ user, onBack }) => {
                             } flex items-center justify-center mb-2`}>
                               {getRankIcon(index + 1)}
                             </div>
-                            <div className="text-white font-semibold">{player.users.name}</div>
+                            <div className="text-white font-semibold">Giocatore {player.user_id.slice(0, 8)}</div>
                             <div className="text-blue-200 text-sm">{player.points} punti</div>
                             <div className="text-green-300 text-xs">
                               {calculateWinRate(player.wins, player.games_played)}% vittorie
@@ -185,7 +182,7 @@ const LeaderboardView = ({ user, onBack }) => {
                             </div>
                             <div>
                               <div className="text-white font-semibold">
-                                {player.users.name}
+                                Giocatore {player.user_id.slice(0, 8)}
                                 {player.user_id === user?.id && (
                                   <Badge className="ml-2 bg-yellow-500/20 text-yellow-300 border-yellow-400/30">
                                     Tu

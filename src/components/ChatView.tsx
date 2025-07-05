@@ -49,10 +49,7 @@ const ChatView = ({ user, onBack }) => {
       
       const { data, error } = await supabase
         .from('chat_messages')
-        .select(`
-          *,
-          users!inner(name, email)
-        `)
+        .select('*')
         .eq('room_id', selectedRoom.id)
         .order('created_at', { ascending: true });
       
@@ -68,9 +65,9 @@ const ChatView = ({ user, onBack }) => {
       const { data, error } = await supabase
         .from('chat_messages')
         .insert({
-          room_id: roomId,
+          room_id: params.roomId,
           sender_id: user.id,
-          message: message,
+          message: params.message,
         })
         .select()
         .single();
@@ -79,7 +76,7 @@ const ChatView = ({ user, onBack }) => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['chat-messages', selectedRoom?.id]);
+      queryClient.invalidateQueries({ queryKey: ['chat-messages', selectedRoom?.id] });
       setNewMessage("");
       scrollToBottom();
     },
@@ -95,8 +92,8 @@ const ChatView = ({ user, onBack }) => {
       const { data, error } = await supabase
         .from('chat_rooms')
         .insert({
-        name: params.name,
-        type: params.type || 'group',
+          name: params.name,
+          type: params.type || 'group',
           created_by: user.id,
         })
         .select()
@@ -106,7 +103,7 @@ const ChatView = ({ user, onBack }) => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['chat-rooms']);
+      queryClient.invalidateQueries({ queryKey: ['chat-rooms'] });
       toast.success("Chat creata con successo!");
     },
     onError: (error) => {
@@ -319,7 +316,7 @@ const ChatView = ({ user, onBack }) => {
                             } rounded-lg p-3`}>
                               {message.sender_id !== user.id && (
                                 <div className="text-blue-200 text-xs mb-1 font-medium">
-                                  {message.users.name}
+                                  Utente {message.sender_id.slice(0, 8)}
                                 </div>
                               )}
                               <div className="text-white">{message.message}</div>
@@ -344,11 +341,11 @@ const ChatView = ({ user, onBack }) => {
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         className="flex-1 bg-white/10 border-white/30 text-white placeholder:text-blue-200"
-                        disabled={sendMessageMutation.isLoading}
+                        disabled={sendMessageMutation.isPending}
                       />
                       <Button
                         type="submit"
-                        disabled={!newMessage.trim() || sendMessageMutation.isLoading}
+                        disabled={!newMessage.trim() || sendMessageMutation.isPending}
                         className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
                       >
                         <Send className="w-4 h-4" />
