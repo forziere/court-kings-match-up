@@ -257,9 +257,9 @@ const DashboardView = ({ user, onLogout }) => {
             {(userRole === 'admin' || userRole === 'moderator') && (
               <TabsTrigger 
                 value="gestore" 
-                className="data-[state=active]:bg-white/20 data-[state=active]:text-white text-blue-200 rounded-lg"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-500 data-[state=active]:text-white text-blue-200 rounded-lg font-semibold border border-orange-400/30 px-4 py-2"
               >
-                🏢 Gestore
+                🏢 Gestore Campi
               </TabsTrigger>
             )}
             <TabsTrigger 
@@ -535,7 +535,7 @@ const DashboardView = ({ user, onLogout }) => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className={`grid grid-cols-1 ${userRole === 'admin' ? 'md:grid-cols-4' : 'md:grid-cols-3'} gap-4`}>
                     <div className="relative overflow-hidden rounded-xl">
                       <div 
                         className="absolute inset-0 bg-cover bg-center"
@@ -586,6 +586,25 @@ const DashboardView = ({ user, onLogout }) => {
                         Tornei
                       </Button>
                     </div>
+
+                    {userRole === 'admin' && (
+                      <div className="relative overflow-hidden rounded-xl">
+                        <div 
+                          className="absolute inset-0 bg-cover bg-center"
+                          style={{
+                            backgroundImage: `url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80')`
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-orange-600/80 to-yellow-500/60" />
+                        <Button 
+                          onClick={() => setShowUserManagement(true)}
+                          className="relative z-10 w-full bg-transparent hover:bg-white/10 border-0 h-20 flex-col gap-2 text-white"
+                        >
+                          <Users className="w-6 h-6" />
+                          Gestione Utenti
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

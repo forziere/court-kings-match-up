@@ -54,6 +54,7 @@ const AdminDashboard = ({ user, onBack, onShowUserManagement }) => {
         return;
       }
 
+      // Carica statistiche admin
       const { data, error } = await supabase.functions.invoke('auth-dashboard', {
         headers: {
           Authorization: `Bearer ${session.session.access_token}`,
@@ -67,7 +68,22 @@ const AdminDashboard = ({ user, onBack, onShowUserManagement }) => {
         return;
       }
 
-      setStats(data);
+      // Carica numero utenti aggiornato
+      const { count: totalUsers, error: countError } = await supabase
+        .from('users')
+        .select('*', { count: 'exact', head: true });
+
+      if (!countError && totalUsers !== null) {
+        setStats({
+          ...data,
+          utenti: {
+            ...data?.utenti,
+            totale_utenti: totalUsers
+          }
+        });
+      } else {
+        setStats(data);
+      }
     } catch (error) {
       console.error('Admin stats error:', error);
       toast.error("Errore nel caricamento dati");
