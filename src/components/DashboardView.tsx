@@ -30,43 +30,55 @@ import { supabase } from "@/integrations/supabase/client";
 const DashboardView = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [userRole, setUserRole] = useState("user");
+  const [isLoadingRole, setIsLoadingRole] = useState(true);
 
   useEffect(() => {
     checkUserRole();
-  }, []);
+  }, [user]);
 
   const checkUserRole = async () => {
+    console.log("🔍 Checking user role for:", user);
+    setIsLoadingRole(true);
+    
     try {
       const { data: userRoles, error } = await supabase
         .from('user_roles')
         .select('role')
         .eq('user_id', user.id);
       
-      console.log('User roles data:', userRoles, 'User ID:', user.id);
+      console.log('📋 User roles query result:', { userRoles, error, userId: user.id });
       
       if (error) {
-        console.error('Error fetching user roles:', error);
+        console.error('❌ Error fetching user roles:', error);
         setUserRole('user');
+        setIsLoadingRole(false);
         return;
       }
       
       if (userRoles && userRoles.length > 0) {
         // Get the highest role (admin > moderator > user)
         const roles = userRoles.map(r => r.role);
+        console.log('🎭 Found roles:', roles);
+        
         if (roles.includes('admin')) {
+          console.log('👑 Setting user as ADMIN');
           setUserRole('admin');
         } else if (roles.includes('moderator')) {
+          console.log('🏢 Setting user as MODERATOR');  
           setUserRole('moderator');
         } else {
+          console.log('👤 Setting user as USER');
           setUserRole('user');
         }
       } else {
-        console.log('No roles found for user, setting default user role');
+        console.log('❌ No roles found for user, setting default user role');
         setUserRole('user');
       }
     } catch (error) {
-      console.error('Error checking user role:', error);
+      console.error('💥 Error checking user role:', error);
       setUserRole('user');
+    } finally {
+      setIsLoadingRole(false);
     }
   };
 
@@ -175,7 +187,18 @@ const DashboardView = ({ user, onLogout }) => {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-white">SportConnect</h1>
-                <p className="text-blue-200 text-sm">Ciao, {user.name}!</p>
+                <p className="text-blue-200 text-sm">
+                  Ciao, {user.name}! 
+                  {isLoadingRole ? (
+                    <span className="ml-2 text-yellow-300">🔄 Caricamento ruolo...</span>
+                  ) : (
+                    <span className="ml-2">
+                      {userRole === 'admin' && <span className="text-yellow-300">👑 Admin</span>}
+                      {userRole === 'moderator' && <span className="text-blue-300">🏢 Gestore</span>}
+                      {userRole === 'user' && <span className="text-green-300">👤 Utente</span>}
+                    </span>
+                  )}
+                </p>
               </div>
             </div>
             
