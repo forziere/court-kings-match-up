@@ -38,6 +38,11 @@ const DashboardView = ({ user, onLogout }) => {
   const [showFindOpponents, setShowFindOpponents] = useState(false);
   const [showUserManagement, setShowUserManagement] = useState(false);
 
+  // Debug state
+  useEffect(() => {
+    console.log('🔍 showUserManagement state changed:', showUserManagement);
+  }, [showUserManagement]);
+
   useEffect(() => {
     checkUserRole();
   }, [user]);
@@ -154,6 +159,8 @@ const DashboardView = ({ user, onLogout }) => {
     }
   };
 
+  console.log('🎯 DashboardView render - showUserManagement:', showUserManagement, 'userRole:', userRole);
+
   if (activeTab === "admin" && userRole === "admin") {
     return <AdminDashboard user={user} onBack={() => setActiveTab("dashboard")} onShowUserManagement={() => setShowUserManagement(true)} />;
   }
@@ -164,7 +171,10 @@ const DashboardView = ({ user, onLogout }) => {
 
   if (showUserManagement) {
     console.log('🎯 Showing UserManagement component');
-    return <UserManagement onBack={() => setShowUserManagement(false)} />;
+    return <UserManagement onBack={() => {
+      console.log('🎯 UserManagement onBack called');
+      setShowUserManagement(false);
+    }} />;
   }
 
   if (activeTab === "booking") {
